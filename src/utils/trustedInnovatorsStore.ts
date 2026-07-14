@@ -10,7 +10,7 @@ export type TrustedInnovator = {
 };
 
 const STORE_EVENT = 'blacksoft_trusted_innovators_updated';
-const API_PATH = '/innovators';
+const API_PATH = '/dashboard/innovators';
 
 const EMPTY_TRUSTED_INNOVATORS: TrustedInnovator[] = [];
 

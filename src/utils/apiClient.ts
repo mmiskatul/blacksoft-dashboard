@@ -16,6 +16,21 @@ export function getApiBaseUrl(): string {
   );
 }
 
+const AUTH_TOKEN_KEY = 'blacksoft_dashboard_access_token';
+
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+export function setAuthToken(token: string): void {
+  window.localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+export function clearAuthToken(): void {
+  if (typeof window !== 'undefined') window.localStorage.removeItem(AUTH_TOKEN_KEY);
+}
+
 export async function apiRequest<T>(
   path: string,
   options: RequestInit = {}
@@ -24,12 +39,14 @@ export async function apiRequest<T>(
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(getAuthToken() ? { Authorization: `Bearer ${getAuthToken()}` } : {}),
       ...(options.headers || {}),
     },
     cache: 'no-store',
   });
 
   if (!response.ok) {
+    if (response.status === 401) clearAuthToken();
     const detail = await response.text().catch(() => '');
     throw new Error(detail || `Request failed with status ${response.status}`);
   }
@@ -48,6 +65,7 @@ export async function uploadImageToCloudinary(file: File): Promise<UploadRespons
   const response = await fetch(`${getApiBaseUrl()}/uploads/image`, {
     method: 'POST',
     body: formData,
+    headers: getAuthToken() ? { Authorization: `Bearer ${getAuthToken()}` } : undefined,
     cache: 'no-store',
   });
 

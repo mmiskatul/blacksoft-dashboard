@@ -24,8 +24,8 @@ export interface TechnologyStackSettings {
 }
 
 const STORE_EVENT = 'blacksoft_technology_stack_updated';
-const CARDS_API_PATH = '/technology-stack/cards';
-const SETTINGS_API_PATH = '/technology-stack/settings';
+const CARDS_API_PATH = '/dashboard/technology-stack/cards';
+const SETTINGS_API_PATH = '/dashboard/technology-stack/settings';
 
 const EMPTY_CARDS: TechnologyStackCard[] = [];
 const EMPTY_SETTINGS: TechnologyStackSettings = {

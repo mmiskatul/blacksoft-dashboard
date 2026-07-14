@@ -13,7 +13,7 @@ export type CapabilityCard = {
 };
 
 const STORE_EVENT = 'blacksoft_capability_cards_updated';
-const API_PATH = '/capabilities';
+const API_PATH = '/dashboard/capabilities';
 
 const EMPTY_CAPABILITY_CARDS: CapabilityCard[] = [];
 

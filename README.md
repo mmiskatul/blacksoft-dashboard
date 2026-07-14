@@ -15,3 +15,10 @@ The dashboard runs on `http://localhost:3000` by default. Set
 
 The public website remains in `MishiAi-frontend`; this app owns the dashboard
 routes at its root (`/`, `/capabilities`, `/team-members`, and so on).
+
+## Authentication
+
+Sign-in requires the administrator email and password configured in the
+backend, followed by a six-digit verification code delivered through SMTP.
+Sessions use expiring bearer tokens. Password recovery is available at
+`/forgot-password` and also requires an SMTP-delivered code.

@@ -31,7 +31,7 @@ export default function DashboardOverviewPage() {
 
   React.useEffect(() => {
     let cancelled = false;
-    void apiRequest<Summary>('/summary')
+    void apiRequest<Summary>('/dashboard/summary')
       .then((data) => {
         if (!cancelled) setSummary({ ...initialSummary, ...data });
       })
@@ -61,7 +61,7 @@ export default function DashboardOverviewPage() {
             Every change here is reflected in the live experience.
           </p>
         </div>
-        <Link href="/" target="_blank" className={styles.heroAction}>
+        <Link href={process.env.NEXT_PUBLIC_PUBLIC_SITE_URL || 'http://localhost:3000'} target="_blank" className={styles.heroAction}>
           View live site <span>↗</span>
         </Link>
       </section>

@@ -20,8 +20,8 @@ export interface TeamSectionSettings {
 }
 
 const EVENT_NAME = 'blacksoft_team_updated';
-const MEMBERS_API_PATH = '/team-members/members';
-const SETTINGS_API_PATH = '/team-members/settings';
+const MEMBERS_API_PATH = '/dashboard/team-members/members';
+const SETTINGS_API_PATH = '/dashboard/team-members/settings';
 
 const EMPTY_SETTINGS: TeamSectionSettings = {
   title: '',

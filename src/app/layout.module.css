@@ -5,6 +5,9 @@
   background: #080d18;
   color: #e8edf7;
 }
+.sessionLoading { min-height: 100vh; display: grid; place-items: center; background: #080f1b; color: #8d9bb0; }
+.logoutButton { border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 8px 10px; background: transparent; color: #aebbd0; cursor: pointer; font-size: .72rem; }
+.logoutButton:hover { border-color: rgba(96,220,184,.5); color: #60dcb8; }
 
 .sidebar {
   position: sticky;

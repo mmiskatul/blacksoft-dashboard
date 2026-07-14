@@ -2,11 +2,33 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './layout.module.css';
+import { apiRequest, clearAuthToken, getAuthToken } from '../utils/apiClient';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || '';
+  const router = useRouter();
+  const isAuthPage = pathname === '/login' || pathname === '/forgot-password' || pathname === '/reset-password';
+  const [checkingSession, setCheckingSession] = React.useState(!isAuthPage);
+
+  React.useEffect(() => {
+    if (isAuthPage) return;
+    setCheckingSession(true);
+    if (!getAuthToken()) {
+      router.replace('/login');
+      return;
+    }
+    void apiRequest('/auth/me')
+      .catch(() => {
+        clearAuthToken();
+        router.replace('/login');
+      })
+      .finally(() => setCheckingSession(false));
+  }, [isAuthPage, router]);
+
+  if (isAuthPage) return <>{children}</>;
+  if (checkingSession) return <div className={styles.sessionLoading}>Checking session…</div>;
 
   const getBreadcrumbs = () => {
     const isOverview = pathname === '/';
@@ -143,6 +165,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className={styles.avatar}>A</div>
               <span className={styles.profileName}>Admin</span>
             </div>
+            <button type="button" className={styles.logoutButton} onClick={() => { clearAuthToken(); router.replace('/login'); }}>Log out</button>
           </div>
         </header>
 

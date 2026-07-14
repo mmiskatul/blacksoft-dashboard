@@ -14,7 +14,7 @@ export type EcommerceCard = {
 };
 
 const STORE_EVENT = 'blacksoft_ecommerce_cards_updated';
-const API_PATH = '/ecommerce/cards';
+const API_PATH = '/dashboard/ecommerce/cards';
 const EMPTY_CARDS: EcommerceCard[] = [];
 
 let cachedCardsValue: EcommerceCard[] = EMPTY_CARDS;
