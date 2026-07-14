@@ -1,0 +1,141 @@
+.dashboardContainer {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  background: #080d18;
+  color: #e8edf7;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b1220;
+  z-index: 20;
+}
+
+.sidebarHeader {
+  padding: 25px 22px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #f8fbff;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.logo::before {
+  content: "";
+  width: 27px;
+  height: 27px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #65e6bd, #3f8cff);
+  box-shadow: 0 0 25px rgba(78, 216, 188, 0.32);
+}
+
+.sidebarNav { padding: 24px 12px; }
+.navGroup { display: flex; flex-direction: column; gap: 5px; }
+.groupLabel {
+  padding: 0 12px 9px;
+  color: #6f7d94;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #8794aa;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: 180ms ease;
+}
+.navLink:hover { color: #f8fbff; background: rgba(255, 255, 255, 0.045); }
+.activeLink {
+  color: #eafff8 !important;
+  background: linear-gradient(90deg, rgba(68, 211, 174, 0.16), rgba(68, 211, 174, 0.035));
+  border-color: rgba(94, 225, 190, 0.18);
+}
+.icon { width: 16px; height: 16px; flex: 0 0 auto; }
+
+.contentArea { min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 42px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(8, 13, 24, 0.84);
+  backdrop-filter: blur(18px);
+}
+.breadcrumbs { color: #7e8ba1; font-size: 0.76rem; font-weight: 600; }
+.breadcrumbs span { margin: 0 5px; }
+.breadcrumbs span:last-child { color: #e6edf9; }
+.topActions { display: flex; align-items: center; gap: 12px; }
+.searchBox { position: relative; }
+.searchInput {
+  width: 210px;
+  padding: 10px 14px 10px 35px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  outline: none;
+  background: #111a2a;
+  color: #e8edf7;
+  font-size: 0.78rem;
+}
+.searchInput:focus { border-color: rgba(94, 225, 190, 0.55); }
+.searchIcon { position: absolute; left: 12px; top: 12px; width: 14px; height: 14px; color: #6f7d94; }
+.notificationBtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  color: #8d9bb0;
+}
+.notificationBtn:hover { color: #fff; background: rgba(255,255,255,.05); }
+.notifBadge { position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; border-radius: 50%; background: #f3b35c; }
+.profileChip { display: flex; align-items: center; gap: 9px; padding-left: 8px; color: #dce5f3; font-size: 0.78rem; font-weight: 700; }
+.avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: #dffbef; color: #12342b; font-size: 0.75rem; }
+.mainContent { flex: 1; padding: 42px; background: radial-gradient(circle at 75% 0%, rgba(50, 103, 165, 0.11), transparent 30%); }
+.mobileNav { display: none; }
+
+@media (max-width: 1040px) {
+  .dashboardContainer { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .topBar { padding: 0 24px; }
+  .mainContent { padding: 28px 24px; }
+  .mobileNav { display: flex; gap: 7px; overflow-x: auto; padding: 11px 24px; border-bottom: 1px solid rgba(255,255,255,.07); background: #0b1220; }
+  .mobileNav a { flex: 0 0 auto; padding: 7px 11px; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; color: #8794aa; font-size: .7rem; font-weight: 700; }
+  .mobileNav a:hover { color: #eafff8; border-color: rgba(94,225,190,.3); }
+}
+@media (max-width: 640px) {
+  .topBar { min-height: 68px; padding: 0 16px; }
+  .topActions { gap: 7px; }
+  .searchBox { display: none; }
+  .profileName { display: none; }
+  .mobileNav { padding: 9px 16px; }
+  .mainContent { padding: 22px 16px; }
+}
