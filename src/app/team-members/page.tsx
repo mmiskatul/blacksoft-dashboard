@@ -52,6 +52,9 @@ const emptyDraft = {
   role: '',
   imageSrc: '',
   imageAlt: '',
+  logo: '',
+  bio: '',
+  link: '',
 };
 
 export default function TeamMembersDashboardPage() {
@@ -83,6 +86,9 @@ export default function TeamMembersDashboardPage() {
       role: member.role,
       imageSrc: member.imageSrc,
       imageAlt: member.imageAlt,
+      logo: member.logo,
+      bio: member.bio,
+      link: member.link,
     });
     setEditorOpen(true);
   };
@@ -121,6 +127,9 @@ export default function TeamMembersDashboardPage() {
     const nextRole = draft.role.trim();
     const nextImageSrc = draft.imageSrc.trim();
     const nextImageAlt = draft.imageAlt.trim();
+    const nextLogo = draft.logo.trim();
+    const nextBio = draft.bio.trim();
+    const nextLink = draft.link.trim();
 
     if (!nextName || !nextRole) {
       return;
@@ -132,9 +141,12 @@ export default function TeamMembersDashboardPage() {
         role: nextRole,
         imageSrc: nextImageSrc,
         imageAlt: nextImageAlt,
+        logo: nextLogo,
+        bio: nextBio,
+        link: nextLink,
       });
     } else {
-      addTeamMember(nextName, nextRole, nextImageSrc, nextImageAlt);
+      addTeamMember(nextName, nextRole, nextImageSrc, nextImageAlt, nextLogo, nextBio, nextLink);
     }
 
     closeEditor();
@@ -415,6 +427,22 @@ export default function TeamMembersDashboardPage() {
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.82rem', color: 'var(--text-light)' }}>Image Alt</label>
                 <input type="text" value={draft.imageAlt} onChange={(event) => setDraft((prev) => ({ ...prev, imageAlt: event.target.value }))} placeholder="Descriptive alt text" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--border-light)', background: 'rgba(255,255,255,0.02)', color: 'var(--text-main)' }} />
               </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.82rem', color: 'var(--text-light)' }}>Logo / Tech Icon URL</label>
+                <input type="text" value={draft.logo} onChange={(event) => setDraft((prev) => ({ ...prev, logo: event.target.value }))} placeholder="Example: /icons/python.svg" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--border-light)', background: 'rgba(255,255,255,0.02)', color: 'var(--text-main)' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.82rem', color: 'var(--text-light)' }}>Profile / Social Link</label>
+                <input type="text" value={draft.link} onChange={(event) => setDraft((prev) => ({ ...prev, link: event.target.value }))} placeholder="Example: https://github.com/username" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--border-light)', background: 'rgba(255,255,255,0.02)', color: 'var(--text-main)' }} />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.82rem', color: 'var(--text-light)' }}>Biography / Short Description</label>
+              <textarea value={draft.bio} onChange={(event) => setDraft((prev) => ({ ...prev, bio: event.target.value }))} placeholder="A short bio or details about their specialization..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--border-light)', background: 'rgba(255,255,255,0.02)', color: 'var(--text-main)', resize: 'vertical' }} />
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>

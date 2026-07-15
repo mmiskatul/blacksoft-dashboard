@@ -11,10 +11,14 @@ export const DEFAULTS = {
   'home.hero.cta': 'Book a Strategy Call',
 
   // About Page Hero
-  'about.hero.tag': 'OUR MISSION',
+  'about.hero.tag': 'WHO WE ARE',
   'about.hero.title': 'Architecting Intelligence for the Elite Enterprise.',
-  'about.hero.description': "At Blacksoft, we don't just build software; we engineer the cognitive infrastructure that powers the world's most ambitious organizations. Our mission is to bridge the gap between raw data and autonomous wisdom.",
+  'about.hero.description': "At Blacksoft, we don't just build software; we engineer the cognitive infrastructure that powers the world's most ambitious organizations.",
   'about.hero.cta': 'Explore Our Tech',
+  'about.mission.title': 'Bridge the gap between raw data and autonomous wisdom.',
+  'about.mission.description': 'We engineer high-availability cognitive architectures that integrate seamlessly into enterprise workflows, giving teams the tools to solve complex challenges with custom AI engines.',
+  'about.vision.title': 'To build the trusted intelligence layer for global industries.',
+  'about.vision.description': 'We envision a future where secure, zero-trust AI agents drive core business operations, enhancing productivity and decision-making capabilities across specialized domains.',
 
   // Technology Page Hero
   'tech.hero.tag': 'NEURAL INFRASTRUCTURE',
@@ -48,7 +52,18 @@ export const DEFAULTS = {
   'cta.title': 'Ready to build the future of industry?',
   'cta.description': "Join the ranks of global innovators who have transformed their operations with Blacksoft's AI-first intelligence platforms.",
   'cta.primary': 'Schedule a Consultation',
-  'cta.secondary': 'View Case Studies'
+  'cta.secondary': 'View Case Studies',
+
+  // Who We Are Section
+  'home.whoweare.tag': 'WHO WE ARE',
+  'home.whoweare.title': 'We are a collective of digital engineers, designers, and systems architects.',
+  'home.whoweare.description': 'At Blacksoft, we build high-fidelity software products, autonomous agent layers, and scalable cloud infrastructure for startups and modern companies.',
+  'home.whoweare.highlight1.num': '50+',
+  'home.whoweare.highlight1.label': 'Intelligent Systems Shipped',
+  'home.whoweare.highlight2.num': '99.9%',
+  'home.whoweare.highlight2.label': 'SLA System Availability',
+  'home.whoweare.highlight3.num': '24/7',
+  'home.whoweare.highlight3.label': 'Continuous Optimization'
 };
 
 export function getConfig(key: keyof typeof DEFAULTS): string {

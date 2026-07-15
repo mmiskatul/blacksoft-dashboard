@@ -9,6 +9,9 @@ export interface TeamMember {
   role: string;
   imageSrc: string;
   imageAlt: string;
+  logo: string;
+  bio: string;
+  link: string;
   enabled: boolean;
 }
 
@@ -49,6 +52,9 @@ function normalizeMember(member: Partial<TeamMember>, index = 0): TeamMember {
     role: typeof member.role === 'string' && member.role.trim() ? member.role.trim() : 'TEAM MEMBER',
     imageSrc: typeof imageSrc === 'string' ? imageSrc.trim() : '',
     imageAlt: typeof imageAlt === 'string' && imageAlt.trim() ? imageAlt.trim() : 'Team member image',
+    logo: typeof member.logo === 'string' && member.logo.trim() ? member.logo.trim() : '',
+    bio: typeof member.bio === 'string' && member.bio.trim() ? member.bio.trim() : '',
+    link: typeof member.link === 'string' && member.link.trim() ? member.link.trim() : '',
     enabled: typeof member.enabled === 'boolean' ? member.enabled : true,
   };
 }
@@ -184,13 +190,16 @@ export function setTeamSettings(settings: TeamSectionSettings) {
   });
 }
 
-export function addTeamMember(name: string, role: string, imageSrc: string, imageAlt: string) {
+export function addTeamMember(name: string, role: string, imageSrc: string, imageAlt: string, logo: string, bio: string, link: string) {
   const optimisticMember: TeamMember = {
     id: `team-member-${Date.now()}`,
     name: name.trim(),
     role: role.trim(),
     imageSrc: imageSrc.trim(),
     imageAlt: imageAlt.trim(),
+    logo: logo.trim(),
+    bio: bio.trim(),
+    link: link.trim(),
     enabled: true,
   };
 
@@ -204,6 +213,9 @@ export function addTeamMember(name: string, role: string, imageSrc: string, imag
       role: optimisticMember.role,
       imageSrc: optimisticMember.imageSrc,
       imageAlt: optimisticMember.imageAlt,
+      logo: optimisticMember.logo,
+      bio: optimisticMember.bio,
+      link: optimisticMember.link,
       enabled: optimisticMember.enabled,
     }),
   }).then((created) => {
