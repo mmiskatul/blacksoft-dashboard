@@ -124,8 +124,11 @@ async function hydrateSettingsFromApi(): Promise<void> {
   }
 }
 
-function ensureMembersHydrated() {
-  if (typeof window === 'undefined' || membersHydrated || membersHydrationPromise) {
+function ensureMembersHydrated(force = false) {
+  if (typeof window === 'undefined' || membersHydrationPromise) {
+    return;
+  }
+  if (membersHydrated && !force) {
     return;
   }
 
@@ -134,8 +137,11 @@ function ensureMembersHydrated() {
   });
 }
 
-function ensureSettingsHydrated() {
-  if (typeof window === 'undefined' || settingsHydrated || settingsHydrationPromise) {
+function ensureSettingsHydrated(force = false) {
+  if (typeof window === 'undefined' || settingsHydrationPromise) {
+    return;
+  }
+  if (settingsHydrated && !force) {
     return;
   }
 
@@ -276,7 +282,7 @@ export function useTeamMembers() {
   }, []);
 
   React.useEffect(() => {
-    ensureMembersHydrated();
+    ensureMembersHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(
@@ -298,7 +304,7 @@ export function useTeamSettings() {
   }, []);
 
   React.useEffect(() => {
-    ensureSettingsHydrated();
+    ensureSettingsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(
