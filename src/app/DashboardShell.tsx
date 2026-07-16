@@ -118,6 +118,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Why Us
             </Link>
             <Link
+              href="/solutions"
+              className={`${styles.navLink} ${pathname.startsWith('/solutions') ? styles.activeLink : ''}`}
+            >
+              <span className={styles.icon} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', width: '16px', height: '16px' }}>💼</span>
+              Solutions Catalog
+            </Link>
+            <Link
               href="/technology-stack"
               className={`${styles.navLink} ${pathname.startsWith('/technology-stack') ? styles.activeLink : ''}`}
             >
@@ -190,6 +197,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/what-we-do">What We Do</Link>
           <Link href="/who-we-are">Who We Are</Link>
           <Link href="/why-us">Why Us</Link>
+          <Link href="/solutions">Solutions</Link>
           <Link href="/team-members">Team</Link>
         </nav>
 
