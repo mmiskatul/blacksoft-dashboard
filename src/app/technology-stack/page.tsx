@@ -62,25 +62,15 @@ const ICON_OPTIONS: Array<{ key: TechnologyStackIconKey; label: string; desc: st
 
 // Suggested category names matching the frontend grouping
 const CATEGORY_SUGGESTIONS = [
-  'FRONTEND FRAMEWORK',
-  'BACKEND FRAMEWORK',
-  'MOBILE FRAMEWORK',
-  'DEPLOYMENT & CLOUD',
-  'DATABASE',
-  'AI / ML',
-  'DEEP LEARNING PLATFORMS',
-  'ACCELERATED HARDWARE',
-  'DESIGN TOOLS',
-  'TESTING & QA',
+  'FIGMA',
+  'FRONTEND',
+  'APP',
+  'BACKEND',
+  'DEPLOYMENT',
 ];
 
 // Default category ordering for grouping
-const CATEGORY_ORDER = [
-  'FRONTEND FRAMEWORK',
-  'BACKEND FRAMEWORK',
-  'MOBILE FRAMEWORK',
-  'DEPLOYMENT & CLOUD',
-];
+const CATEGORY_ORDER = ['FIGMA', 'FRONTEND', 'APP', 'BACKEND', 'DEPLOYMENT'];
 
 // ─── Shared Styles ────────────────────────────────────────────────────────────
 
