@@ -69,6 +69,9 @@ export default function TeamMembersDashboardPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Delete confirmation modal state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
   const visibleCount = useMemo(() => cards.filter((member) => member.enabled).length, [cards]);
   const hiddenCount = cards.length - visibleCount;
   const selectedCard = cards.find((member) => member.id === selectedId) ?? null;
@@ -150,6 +153,12 @@ export default function TeamMembersDashboardPage() {
     }
 
     closeEditor();
+  };
+
+  const executeDelete = () => {
+    if (!deleteConfirmId) return;
+    deleteTeamMember(deleteConfirmId);
+    setDeleteConfirmId(null);
   };
 
   const openSettings = () => {
@@ -290,7 +299,7 @@ export default function TeamMembersDashboardPage() {
                         <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
                       </svg>
                     </IconButton>
-                    <IconButton label="Delete member" onClick={() => deleteTeamMember(member.id)}>
+                    <IconButton label="Delete member" onClick={() => setDeleteConfirmId(member.id)}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
                         <path d="M3 6h18" />
                         <path d="M8 6V4h8v2" />
@@ -503,6 +512,80 @@ export default function TeamMembersDashboardPage() {
               </button>
               <button className="btn btn-secondary" type="button" onClick={closeSettings}>
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.8)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 3000,
+            padding: '20px'
+          }}
+        >
+          <div 
+            style={{
+              width: 'min(100%, 400px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8)',
+              padding: '30px',
+              textAlign: 'center',
+              borderRadius: '20px',
+              animation: 'slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚠️</div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>Confirm Deletion</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-light)', lineHeight: 1.5, marginBottom: '24px' }}>
+              Are you sure you want to permanently delete this team member? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'var(--text-muted)',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={executeDelete}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Yes, Delete
               </button>
             </div>
           </div>

@@ -8,6 +8,8 @@ export type WhyUsCard = {
   title: string;
   description: string;
   icon: string;
+  imageSrc?: string;
+  imageAlt?: string;
   enabled: boolean;
 };
 
@@ -43,6 +45,8 @@ function normalizeCards(cards: unknown): WhyUsCard[] {
         ? item.description.trim()
         : 'No description provided.',
       icon: typeof item.icon === 'string' && item.icon.trim() ? item.icon.trim() : '⚡',
+      imageSrc: typeof item.imageSrc === 'string' ? item.imageSrc.trim() : '',
+      imageAlt: typeof item.imageAlt === 'string' ? item.imageAlt.trim() : '',
       enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
     }));
 }

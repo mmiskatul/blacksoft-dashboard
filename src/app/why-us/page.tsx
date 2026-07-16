@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { useWhyUsCards, addWhyUsCard, updateWhyUsCard, deleteWhyUsCard, type WhyUsCard } from '../../utils/whyUsStore';
+import { uploadImageToCloudinary } from '../../utils/apiClient';
 
 function IconButton({
   label,
@@ -48,12 +49,21 @@ export default function WhyUsConfigPage() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Delete confirmation modal state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [draftImageSrc, setDraftImageSrc] = useState('');
+  const [draftImageAlt, setDraftImageAlt] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   const visibleCount = useMemo(() => cards.filter((card) => card.enabled).length, [cards]);
   const hiddenCount = cards.length - visibleCount;
 
   const openCreate = () => {
     setSelectedId(null);
     setDraft(emptyDraft);
+    setDraftImageSrc('');
+    setDraftImageAlt('');
     setEditorOpen(true);
   };
 
@@ -64,6 +74,8 @@ export default function WhyUsConfigPage() {
       description: card.description,
       icon: card.icon,
     });
+    setDraftImageSrc(card.imageSrc || '');
+    setDraftImageAlt(card.imageAlt || '');
     setEditorOpen(true);
   };
 
@@ -71,6 +83,21 @@ export default function WhyUsConfigPage() {
     setEditorOpen(false);
     setSelectedId(null);
     setDraft(emptyDraft);
+    setDraftImageSrc('');
+    setDraftImageAlt('');
+  };
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      setUploadingImage(true);
+      const res = await uploadImageToCloudinary(file);
+      setDraftImageSrc(res.secureUrl);
+      setDraftImageAlt(file.name.split('.')[0] || 'Benefit card image');
+    } catch (err: any) {
+      alert(err.message || 'Failed to upload image.');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -82,10 +109,15 @@ export default function WhyUsConfigPage() {
 
     setSaving(true);
     try {
+      const payload = {
+        ...draft,
+        imageSrc: draftImageSrc.trim(),
+        imageAlt: draftImageAlt.trim(),
+      };
       if (selectedId) {
-        await updateWhyUsCard(selectedId, draft);
+        await updateWhyUsCard(selectedId, payload);
       } else {
-        await addWhyUsCard(draft);
+        await addWhyUsCard(payload);
       }
       closeEditor();
     } catch {
@@ -103,18 +135,18 @@ export default function WhyUsConfigPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this benefit? This cannot be undone.')) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!deleteConfirmId) return;
 
     try {
-      await deleteWhyUsCard(id);
-      if (selectedId === id) {
+      await deleteWhyUsCard(deleteConfirmId);
+      if (selectedId === deleteConfirmId) {
         closeEditor();
       }
     } catch {
       alert('Failed to delete card.');
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -238,7 +270,7 @@ export default function WhyUsConfigPage() {
                           </svg>
                         )}
                       </IconButton>
-                      <IconButton label="Delete card" onClick={() => handleDelete(card.id)}>
+                      <IconButton label="Delete card" onClick={() => setDeleteConfirmId(card.id)}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M3 6h18" />
                           <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -249,13 +281,29 @@ export default function WhyUsConfigPage() {
                   </div>
 
                   {/* Body */}
-                  <div>
-                    <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 700, color: 'var(--text-white)' }}>
-                      {card.title}
-                    </h3>
-                    <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: 'var(--text-muted)' }}>
-                      {card.description}
-                    </p>
+                  <div style={{ display: 'flex', gap: '14px', alignItems: 'start' }}>
+                    {card.imageSrc && (
+                      <img 
+                        src={card.imageSrc} 
+                        alt={card.imageAlt || card.title} 
+                        style={{ 
+                          width: '56px', 
+                          height: '56px', 
+                          borderRadius: '8px', 
+                          objectFit: 'cover',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          flexShrink: 0
+                        }} 
+                      />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 700, color: 'var(--text-white)' }}>
+                        {card.title}
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: 'var(--text-muted)' }}>
+                        {card.description}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Visible footer */}
@@ -380,6 +428,86 @@ export default function WhyUsConfigPage() {
                   />
                 </div>
 
+                {/* Showcase Image Upload */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                    Showcase Image
+                  </label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch' }}>
+                    <input
+                      type="text"
+                      value={draftImageSrc}
+                      onChange={(e) => setDraftImageSrc(e.target.value)}
+                      placeholder="Paste URL or click Upload"
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-card)',
+                        background: 'rgba(255,255,255,0.03)',
+                        color: '#fff',
+                        outline: 'none',
+                        fontSize: '0.85rem'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingImage}
+                      style={{
+                        padding: '0 16px',
+                        borderRadius: '8px',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid var(--border-card)',
+                        color: '#fff',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {uploadingImage ? 'Uploading...' : 'Upload'}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file);
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+
+                  {draftImageSrc && (
+                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <img 
+                        src={draftImageSrc} 
+                        alt="Uploaded preview" 
+                        style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} 
+                      />
+                      <div style={{ flex: 1 }}>
+                        <input
+                          type="text"
+                          value={draftImageAlt}
+                          onChange={(e) => setDraftImageAlt(e.target.value)}
+                          placeholder="Image alt description"
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            background: 'rgba(255,255,255,0.02)',
+                            color: '#fff',
+                            outline: 'none',
+                            fontSize: '0.78rem'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
                     Description *
@@ -445,6 +573,80 @@ export default function WhyUsConfigPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.8)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 3000,
+            padding: '20px'
+          }}
+        >
+          <div 
+            style={{
+              width: 'min(100%, 400px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8)',
+              padding: '30px',
+              textAlign: 'center',
+              borderRadius: '20px',
+              animation: 'slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚠️</div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>Confirm Deletion</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-light)', lineHeight: 1.5, marginBottom: '24px' }}>
+              Are you sure you want to permanently delete this benefit? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'var(--text-muted)',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
