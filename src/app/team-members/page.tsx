@@ -55,6 +55,8 @@ const emptyDraft = {
   logo: '',
   bio: '',
   link: '',
+  linkedin: '',
+  github: '',
 };
 
 export default function TeamMembersDashboardPage() {
@@ -92,6 +94,8 @@ export default function TeamMembersDashboardPage() {
       logo: member.logo,
       bio: member.bio,
       link: member.link,
+      linkedin: member.linkedin || '',
+      github: member.github || '',
     });
     setEditorOpen(true);
   };
@@ -133,6 +137,8 @@ export default function TeamMembersDashboardPage() {
     const nextLogo = draft.logo.trim();
     const nextBio = draft.bio.trim();
     const nextLink = draft.link.trim();
+    const nextLinkedin = draft.linkedin.trim();
+    const nextGithub = draft.github.trim();
 
     if (!nextName || !nextRole) {
       return;
@@ -147,9 +153,11 @@ export default function TeamMembersDashboardPage() {
         logo: nextLogo,
         bio: nextBio,
         link: nextLink,
+        linkedin: nextLinkedin,
+        github: nextGithub,
       });
     } else {
-      addTeamMember(nextName, nextRole, nextImageSrc, nextImageAlt, nextLogo, nextBio, nextLink);
+      addTeamMember(nextName, nextRole, nextImageSrc, nextImageAlt, nextLogo, nextBio, nextLink, nextLinkedin, nextGithub);
     }
 
     closeEditor();
@@ -545,14 +553,18 @@ export default function TeamMembersDashboardPage() {
               <input type="text" value={draft.imageAlt} onChange={(event) => setDraft((prev) => ({ ...prev, imageAlt: event.target.value }))} placeholder="Descriptive image alt text" style={{ ...input, marginTop: '4px', fontSize: '0.8rem' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px' }}>
               <div>
-                <label style={label}>Logo Overlay URL (e.g. specialized tech)</label>
+                <label style={label}>Logo Overlay URL</label>
                 <input type="text" value={draft.logo} onChange={(event) => setDraft((prev) => ({ ...prev, logo: event.target.value }))} placeholder="e.g. /icons/react.svg" style={input} />
               </div>
               <div>
-                <label style={label}>LinkedIn / GitHub Profile URL</label>
-                <input type="text" value={draft.link} onChange={(event) => setDraft((prev) => ({ ...prev, link: event.target.value }))} placeholder="e.g. https://linkedin.com/in/username" style={input} />
+                <label style={label}>LinkedIn URL</label>
+                <input type="text" value={draft.linkedin} onChange={(event) => setDraft((prev) => ({ ...prev, linkedin: event.target.value }))} placeholder="https://linkedin.com/in/username" style={input} />
+              </div>
+              <div>
+                <label style={label}>GitHub URL</label>
+                <input type="text" value={draft.github} onChange={(event) => setDraft((prev) => ({ ...prev, github: event.target.value }))} placeholder="https://github.com/username" style={input} />
               </div>
             </div>
 
