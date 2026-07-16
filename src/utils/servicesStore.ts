@@ -106,10 +106,8 @@ export function useServiceCards(): [ServiceCard[], boolean] {
 }
 
 export async function addServiceCard(card: Omit<ServiceCard, 'id' | 'enabled'>): Promise<ServiceCard> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   const newCard = await apiRequest<ServiceCard>(API_PATH, {
     method: 'POST',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: JSON.stringify({
       ...card,
       enabled: true,
@@ -122,10 +120,8 @@ export async function addServiceCard(card: Omit<ServiceCard, 'id' | 'enabled'>):
 }
 
 export async function updateServiceCard(id: string, card: Partial<Omit<ServiceCard, 'id'>>): Promise<ServiceCard> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   const updated = await apiRequest<ServiceCard>(`${API_PATH}/${id}`, {
     method: 'PUT',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: JSON.stringify(card),
   });
 
@@ -135,10 +131,8 @@ export async function updateServiceCard(id: string, card: Partial<Omit<ServiceCa
 }
 
 export async function deleteServiceCard(id: string): Promise<void> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   await apiRequest<void>(`${API_PATH}/${id}`, {
     method: 'DELETE',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
   const updatedList = cachedCardsValue.filter((item) => item.id !== id);

@@ -118,10 +118,8 @@ export function useWhoWeAreSettings(): WhoWeAreSettings {
 }
 
 export async function saveWhoWeAreSettings(settings: Omit<WhoWeAreSettings, 'id'>): Promise<WhoWeAreSettings> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   const updated = await apiRequest<WhoWeAreSettings>(PROTECTED_SETTINGS_API_PATH, {
     method: 'PUT',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: JSON.stringify(settings),
   });
 

@@ -114,10 +114,8 @@ export function useStatsSettings(): StatsSettings {
 }
 
 export async function saveStatsSettings(settings: Omit<StatsSettings, 'id'>): Promise<StatsSettings> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   const updated = await apiRequest<StatsSettings>(PROTECTED_SETTINGS_API_PATH, {
     method: 'PUT',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: JSON.stringify(settings),
   });
 
