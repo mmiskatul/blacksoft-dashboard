@@ -95,10 +95,6 @@ export default function DashboardOverviewPage() {
             <span className={styles.status}>Connected</span>
           </div>
           <div className={styles.scopeList}>
-            <Link href="/architecting-intelligence" className={`${styles.scopeItem} shine-hover`}>
-              <span className={styles.scopeName}>Architecting Intelligence <span className={styles.itemArrow}>→</span></span>
-              <span className={styles.scopeCount}>{summary.capabilities}</span>
-            </Link>
             <Link href="/trusted-by-global-innovators" className={`${styles.scopeItem} shine-hover`}>
               <span className={styles.scopeName}>Trusted by Global Innovators <span className={styles.itemArrow}>→</span></span>
               <span className={styles.scopeCount}>{summary.innovators}</span>

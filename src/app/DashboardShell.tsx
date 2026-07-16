@@ -118,17 +118,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Why Us
             </Link>
             <Link
-              href="/architecting-intelligence"
-              className={`${styles.navLink} ${pathname.startsWith('/architecting-intelligence') ? styles.activeLink : ''}`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <path d="M8 12h8" />
-                <path d="M12 8v8" />
-              </svg>
-              Architecting Intelligence
-            </Link>
-            <Link
               href="/ecommerce"
               className={`${styles.navLink} ${pathname.startsWith('/ecommerce') ? styles.activeLink : ''}`}
             >
@@ -227,7 +216,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/what-we-do">What We Do</Link>
           <Link href="/who-we-are">Who We Are</Link>
           <Link href="/why-us">Why Us</Link>
-          <Link href="/architecting-intelligence">Capabilities</Link>
           <Link href="/ecommerce">Commerce</Link>
           <Link href="/app-websites">Websites</Link>
           <Link href="/ai-solutions">AI solutions</Link>
