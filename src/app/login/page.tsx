@@ -24,10 +24,12 @@ export default function LoginPage() {
     try {
       if (!challenge) {
         const res = await apiRequest<Challenge>('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-        setChallenge(res);
         if (res.code) {
-          setCode(res.code);
-          setError('Email delivery failed, but we auto-filled the verification code: ' + res.code);
+          const result = await apiRequest<Token>('/auth/verify-login', { method: 'POST', body: JSON.stringify({ challenge_id: res.challenge_id, code: res.code }) });
+          setAuthToken(result.access_token);
+          router.replace('/');
+        } else {
+          setChallenge(res);
         }
       } else {
         const result = await apiRequest<Token>('/auth/verify-login', { method: 'POST', body: JSON.stringify({ challenge_id: challenge.challenge_id, code }) });
