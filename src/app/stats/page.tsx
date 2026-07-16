@@ -117,16 +117,16 @@ export default function StatsConfigPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', marginBottom: '12px' }}>
                 <div>
                   <label style={labelStyle}>Value (e.g. 50+)</label>
-                  <input required type="text" value={val1} onChange={e => setVal1(e.target.value)} style={inputStyle} />
+                  <input type="text" value={val1} onChange={e => setVal1(e.target.value)} style={inputStyle} />
                 </div>
                 <div>
                   <label style={labelStyle}>Label (e.g. Products Shipped)</label>
-                  <input required type="text" value={lbl1} onChange={e => setLbl1(e.target.value)} style={inputStyle} />
+                  <input type="text" value={lbl1} onChange={e => setLbl1(e.target.value)} style={inputStyle} />
                 </div>
               </div>
               <div>
                 <label style={labelStyle}>Description</label>
-                <textarea required value={desc1} onChange={e => setDesc1(e.target.value)} rows={2} style={textStyle} />
+                <textarea value={desc1} onChange={e => setDesc1(e.target.value)} rows={2} style={textStyle} />
               </div>
             </div>
 
@@ -136,16 +136,16 @@ export default function StatsConfigPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', marginBottom: '12px' }}>
                 <div>
                   <label style={labelStyle}>Value (e.g. $250M+)</label>
-                  <input required type="text" value={val2} onChange={e => setVal2(e.target.value)} style={inputStyle} />
+                  <input type="text" value={val2} onChange={e => setVal2(e.target.value)} style={inputStyle} />
                 </div>
                 <div>
                   <label style={labelStyle}>Label (e.g. Value Generated)</label>
-                  <input required type="text" value={lbl2} onChange={e => setLbl2(e.target.value)} style={inputStyle} />
+                  <input type="text" value={lbl2} onChange={e => setLbl2(e.target.value)} style={inputStyle} />
                 </div>
               </div>
               <div>
                 <label style={labelStyle}>Description</label>
-                <textarea required value={desc2} onChange={e => setDesc2(e.target.value)} rows={2} style={textStyle} />
+                <textarea value={desc2} onChange={e => setDesc2(e.target.value)} rows={2} style={textStyle} />
               </div>
             </div>
 
@@ -155,16 +155,16 @@ export default function StatsConfigPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', marginBottom: '12px' }}>
                 <div>
                   <label style={labelStyle}>Value (e.g. 100%)</label>
-                  <input required type="text" value={val3} onChange={e => setVal3(e.target.value)} style={inputStyle} />
+                  <input type="text" value={val3} onChange={e => setVal3(e.target.value)} style={inputStyle} />
                 </div>
                 <div>
                   <label style={labelStyle}>Label (e.g. Success Rate)</label>
-                  <input required type="text" value={lbl3} onChange={e => setLbl3(e.target.value)} style={inputStyle} />
+                  <input type="text" value={lbl3} onChange={e => setLbl3(e.target.value)} style={inputStyle} />
                 </div>
               </div>
               <div>
                 <label style={labelStyle}>Description</label>
-                <textarea required value={desc3} onChange={e => setDesc3(e.target.value)} rows={2} style={textStyle} />
+                <textarea value={desc3} onChange={e => setDesc3(e.target.value)} rows={2} style={textStyle} />
               </div>
             </div>
           </div>
