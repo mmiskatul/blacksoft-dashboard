@@ -1,17 +1,16 @@
 .dashboardContainer {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr);
   background: #080d18;
   color: #e8edf7;
+  overflow: hidden;
 }
 .sessionLoading { min-height: 100vh; display: grid; place-items: center; background: #080f1b; color: #8d9bb0; }
 .logoutButton { border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 8px 10px; background: transparent; color: #aebbd0; cursor: pointer; font-size: .72rem; }
 .logoutButton:hover { border-color: rgba(96,220,184,.5); color: #60dcb8; }
 
 .sidebar {
-  position: sticky;
-  top: 0;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -21,6 +20,7 @@
   -webkit-backdrop-filter: blur(20px);
   z-index: 20;
   transition: all 0.3s ease;
+  overflow-y: auto;
 }
 
 .sidebarHeader {
@@ -100,7 +100,13 @@
 }
 .icon { width: 16px; height: 16px; flex: 0 0 auto; }
 
-.contentArea { min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
+.contentArea { 
+  min-width: 0; 
+  height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow-y: auto;
+}
 .topBar {
   position: sticky;
   top: 0;
@@ -196,8 +202,9 @@
 .mobileNav { display: none; }
 
 @media (max-width: 1040px) {
-  .dashboardContainer { grid-template-columns: 1fr; }
+  .dashboardContainer { grid-template-columns: 1fr; height: auto; overflow: visible; }
   .sidebar { display: none; }
+  .contentArea { height: auto; overflow-y: visible; }
   .topBar { padding: 0 24px; }
   .mainContent { padding: 28px 24px; }
   .mobileNav { display: flex; gap: 7px; overflow-x: auto; padding: 11px 24px; border-bottom: 1px solid rgba(255,255,255,.07); background: #0b1220; }
