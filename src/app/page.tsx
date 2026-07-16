@@ -99,18 +99,6 @@ export default function DashboardOverviewPage() {
               <span className={styles.scopeName}>Trusted by Global Innovators <span className={styles.itemArrow}>→</span></span>
               <span className={styles.scopeCount}>{summary.innovators}</span>
             </Link>
-            <Link href="/ecommerce" className={`${styles.scopeItem} shine-hover`}>
-              <span className={styles.scopeName}>Personalized Agentic Shopping <span className={styles.itemArrow}>→</span></span>
-              <span className={styles.scopeCount}>{summary.ecommerce_cards}</span>
-            </Link>
-            <Link href="/app-websites" className={`${styles.scopeItem} shine-hover`}>
-              <span className={styles.scopeName}>App & Website <span className={styles.itemArrow}>→</span></span>
-              <span className={styles.scopeCount}>{summary.app_websites}</span>
-            </Link>
-            <Link href="/ai-solutions" className={`${styles.scopeItem} shine-hover`}>
-              <span className={styles.scopeName}>AI Solutions <span className={styles.itemArrow}>→</span></span>
-              <span className={styles.scopeCount}>{summary.ai_solutions}</span>
-            </Link>
             <Link href="/technology-stack" className={`${styles.scopeItem} shine-hover`}>
               <span className={styles.scopeName}>Technology Stack <span className={styles.itemArrow}>→</span></span>
               <span className={styles.scopeCount}>{summary.technology_stack_cards}</span>

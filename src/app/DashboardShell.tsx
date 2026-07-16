@@ -118,32 +118,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Why Us
             </Link>
             <Link
-              href="/ecommerce"
-              className={`${styles.navLink} ${pathname.startsWith('/ecommerce') ? styles.activeLink : ''}`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.icon}>
-                <path d="M6 6h15l-1.5 9h-12z" />
-                <path d="M6 6 5 3H2" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="18" cy="19" r="1" />
-              </svg>
-              E-commerce
-            </Link>
-            <Link
-              href="/app-websites"
-              className={`${styles.navLink} ${pathname.startsWith('/app-websites') ? styles.activeLink : ''}`}
-            >
-              <span className={styles.icon}>W</span>
-              App & Website
-            </Link>
-            <Link
-              href="/ai-solutions"
-              className={`${styles.navLink} ${pathname.startsWith('/ai-solutions') ? styles.activeLink : ''}`}
-            >
-              <span className={styles.icon}>AI</span>
-              AI Solutions
-            </Link>
-            <Link
               href="/technology-stack"
               className={`${styles.navLink} ${pathname.startsWith('/technology-stack') ? styles.activeLink : ''}`}
             >
@@ -216,9 +190,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/what-we-do">What We Do</Link>
           <Link href="/who-we-are">Who We Are</Link>
           <Link href="/why-us">Why Us</Link>
-          <Link href="/ecommerce">Commerce</Link>
-          <Link href="/app-websites">Websites</Link>
-          <Link href="/ai-solutions">AI solutions</Link>
           <Link href="/team-members">Team</Link>
         </nav>
 
