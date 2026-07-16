@@ -33,11 +33,11 @@ function renderIcon(iconKey: TechnologyStackIconKey, size = 18, title = '') {
   if (norm.includes('figma')) {
     return (
       <svg style={iconProps.style} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4z" fill="#0ACF83"/>
-        <path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0z" fill="#1ABC9C"/>
-        <path d="M8 18a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4 4 4 0 0 0-4 4z" fill="#19BC9C"/>
-        <path d="M4 12a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4 4 4 0 0 0-4 4z" fill="#F24E1E"/>
-        <path d="M4 6a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4 4 4 0 0 0-4 4z" fill="#FF7262"/>
+        <path d="M8 2h4v8H8a4 4 0 1 1 0-8z" fill="#F24E1E"/>
+        <path d="M12 2h4a4 4 0 1 1-4 4V2z" fill="#FF7262"/>
+        <path d="M8 10h4v4H8a4 4 0 1 1 0-8z" fill="#A259FF"/>
+        <path d="M8 18a4 4 0 0 1 4-4v4a4 4 0 1 1-8 0 4 4 0 0 1 4-4z" fill="#1ABC9C"/>
+        <path d="M12 10a4 4 0 1 1 8 0 4 4 0 0 1-8 0z" fill="#0ACF83"/>
       </svg>
     );
   }
