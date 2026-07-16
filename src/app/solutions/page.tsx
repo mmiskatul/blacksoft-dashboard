@@ -17,6 +17,9 @@ export default function SolutionsManagerPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Modal visibility state
+  const [showModal, setShowModal] = useState(false);
+
   // Selected card for editing
   const [selectedCard, setSelectedCard] = useState<SolutionCard | null>(null);
   
@@ -67,9 +70,10 @@ export default function SolutionsManagerPage() {
     setDraftImageSrc(card.imageSrc || '');
     setDraftImageAlt(card.imageAlt || '');
     setDraftEnabled(card.enabled);
+    setShowModal(true);
   };
 
-  // Reset form
+  // Reset form / Cancel editing
   const handleReset = () => {
     setSelectedCard(null);
     setOriginalStore(null);
@@ -81,6 +85,7 @@ export default function SolutionsManagerPage() {
     setDraftImageSrc('');
     setDraftImageAlt('');
     setDraftEnabled(true);
+    setShowModal(false);
   };
 
   // Handle image file upload
@@ -95,6 +100,12 @@ export default function SolutionsManagerPage() {
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  // Trigger modal for creating a new card
+  const handleCreateNew = () => {
+    handleReset();
+    setShowModal(true);
   };
 
   // Save changes (Create or Update)
@@ -181,158 +192,211 @@ export default function SolutionsManagerPage() {
             Configure App, Website, Figma design, Backend development, and AI solution cards displayed on the main portfolio catalog.
           </p>
         </div>
+        <button 
+          onClick={handleCreateNew}
+          style={{
+            flex: '0 0 auto',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '14px 22px',
+            border: 'none',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #6366f1 0%, #3f8cff 100%)',
+            color: '#fff',
+            fontWeight: 'bold',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.3)'
+          }}
+        >
+          <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>+</span> Add New Card
+        </button>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.1fr) minmax(280px, 0.9fr)', gap: '24px', marginTop: '24px' }}>
-        
-        {/* Left Side: Cards Grid */}
-        <section className={styles.scopeList} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {categories.map((category) => {
-            const categoryCards = allCards.filter(c => {
-              let cat = c.category;
-              const lower = cat.toLowerCase();
-              if (lower === 'app') cat = 'App';
-              else if (lower === 'website') cat = 'Website';
-              else if (lower.includes('figma') || lower.includes('design')) cat = 'Figma design';
-              else if (lower.includes('backend') || lower.includes('developement') || lower.includes('development')) cat = 'Backend development';
-              else if (lower.includes('ai') || lower.includes('solution')) cat = 'AI solution';
-              return cat === category;
-            });
+      {/* Main List */}
+      <section className={styles.scopeList} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '24px' }}>
+        {categories.map((category) => {
+          const categoryCards = allCards.filter(c => {
+            let cat = c.category;
+            const lower = cat.toLowerCase();
+            if (lower === 'app') cat = 'App';
+            else if (lower === 'website') cat = 'Website';
+            else if (lower.includes('figma') || lower.includes('design')) cat = 'Figma design';
+            else if (lower.includes('backend') || lower.includes('developement') || lower.includes('development')) cat = 'Backend development';
+            else if (lower.includes('ai') || lower.includes('solution')) cat = 'AI solution';
+            return cat === category;
+          });
 
-            return (
-              <article key={category} className={`${styles.panel} ${styles.glassPanel}`}>
-                <div className={styles.panelHeader} style={{ marginBottom: '14px' }}>
-                  <h3 className={styles.panelTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '1.1rem' }}>
-                      {category === 'App' && '📱'}
-                      {category === 'Website' && '🌐'}
-                      {category === 'Figma design' && '🎨'}
-                      {category === 'Backend development' && '⚙️'}
-                      {category === 'AI solution' && '🧠'}
-                    </span>
-                    {category} Cards
-                  </h3>
-                  <span className={styles.panelKicker}>{categoryCards.length} published</span>
-                </div>
+          return (
+            <article key={category} className={`${styles.panel} ${styles.glassPanel}`}>
+              <div className={styles.panelHeader} style={{ marginBottom: '14px' }}>
+                <h3 className={styles.panelTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.1rem' }}>
+                    {category === 'App' && '📱'}
+                    {category === 'Website' && '🌐'}
+                    {category === 'Figma design' && '🎨'}
+                    {category === 'Backend development' && '⚙️'}
+                    {category === 'AI solution' && '🧠'}
+                  </span>
+                  {category} Cards
+                </h3>
+                <span className={styles.panelKicker}>{categoryCards.length} published</span>
+              </div>
 
-                {categoryCards.length === 0 ? (
-                  <p style={{ color: 'var(--text-light)', fontSize: '0.8rem', padding: '10px 0' }}>No cards in this section.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {categoryCards.map((card) => (
-                      <div 
-                        key={card.id} 
-                        style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between', 
-                          alignItems: 'center', 
-                          padding: '14px 16px', 
-                          borderRadius: '10px', 
-                          background: 'rgba(255,255,255,0.02)', 
-                          border: '1px solid rgba(255,255,255,0.04)' 
-                        }}
-                      >
-                        <div style={{ flex: 1, paddingRight: '12px', display: 'flex', gap: '14px', alignItems: 'start' }}>
-                          {card.imageSrc && (
-                            <img 
-                              src={card.imageSrc} 
-                              alt={card.imageAlt || card.title} 
+              {categoryCards.length === 0 ? (
+                <p style={{ color: 'var(--text-light)', fontSize: '0.8rem', padding: '10px 0' }}>No cards in this section.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {categoryCards.map((card) => (
+                    <div 
+                      key={card.id} 
+                      style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        padding: '14px 16px', 
+                        borderRadius: '10px', 
+                        background: 'rgba(255,255,255,0.02)', 
+                        border: '1px solid rgba(255,255,255,0.04)' 
+                      }}
+                    >
+                      <div style={{ flex: 1, paddingRight: '12px', display: 'flex', gap: '14px', alignItems: 'start' }}>
+                        {card.imageSrc && (
+                          <img 
+                            src={card.imageSrc} 
+                            alt={card.imageAlt || card.title} 
+                            style={{ 
+                              width: '64px', 
+                              height: '64px', 
+                              borderRadius: '8px', 
+                              objectFit: 'cover',
+                              border: '1px solid rgba(255,255,255,0.08)'
+                            }} 
+                          />
+                        )}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '1.1rem' }}>{card.icon}</span>
+                            <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{card.title}</strong>
+                            <span 
+                              onClick={() => handleToggleEnabled(card)}
                               style={{ 
-                                width: '64px', 
-                                height: '64px', 
-                                borderRadius: '8px', 
-                                objectFit: 'cover',
-                                border: '1px solid rgba(255,255,255,0.08)'
-                              }} 
-                            />
-                          )}
-                          <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: '1.1rem' }}>{card.icon}</span>
-                              <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{card.title}</strong>
-                              <span 
-                                onClick={() => handleToggleEnabled(card)}
-                                style={{ 
-                                  fontSize: '0.68rem', 
-                                  padding: '2px 6px', 
-                                  borderRadius: '4px', 
-                                  cursor: 'pointer',
-                                  background: card.enabled ? 'rgba(96,220,184,0.1)' : 'rgba(255,255,255,0.05)',
-                                  color: card.enabled ? '#63ddb9' : '#8190a6'
-                                }}
-                              >
-                                {card.enabled ? 'Enabled' : 'Disabled'}
-                              </span>
-                            </div>
-                            <p style={{ color: 'var(--text-light)', fontSize: '0.78rem', marginTop: '6px', lineHeight: 1.4 }}>
-                              {card.description}
-                            </p>
-                            {card.link && card.link !== '#solutions' && (
-                              <small style={{ color: '#6366f1', fontSize: '0.7rem', display: 'block', marginTop: '4px' }}>
-                                Link: {card.link}
-                              </small>
-                            )}
+                                fontSize: '0.68rem', 
+                                padding: '2px 6px', 
+                                borderRadius: '4px', 
+                                cursor: 'pointer',
+                                background: card.enabled ? 'rgba(96,220,184,0.1)' : 'rgba(255,255,255,0.05)',
+                                color: card.enabled ? '#63ddb9' : '#8190a6'
+                              }}
+                            >
+                              {card.enabled ? 'Enabled' : 'Disabled'}
+                            </span>
                           </div>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button 
-                            type="button" 
-                            onClick={() => handleEdit(card)}
-                            style={{ 
-                              padding: '6px 10px', 
-                              borderRadius: '6px', 
-                              background: 'rgba(99, 102, 241, 0.1)', 
-                              color: '#818cf8', 
-                              fontSize: '0.75rem',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            type="button" 
-                            onClick={() => handleDelete(card.id, card.__store)}
-                            style={{ 
-                              padding: '6px 10px', 
-                              borderRadius: '6px', 
-                              background: 'rgba(239, 68, 68, 0.1)', 
-                              color: '#fca5a5', 
-                              fontSize: '0.75rem',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            Delete
-                          </button>
+                          <p style={{ color: 'var(--text-light)', fontSize: '0.78rem', marginTop: '6px', lineHeight: 1.4 }}>
+                            {card.description}
+                          </p>
+                          {card.link && card.link !== '#solutions' && (
+                            <small style={{ color: '#6366f1', fontSize: '0.7rem', display: 'block', marginTop: '4px' }}>
+                              Link: {card.link}
+                            </small>
+                          )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </section>
 
-        {/* Right Side: Form Block */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className={`${styles.panel} ${styles.glassPanel}`} style={{ position: 'sticky', top: '24px' }}>
-            <div className={styles.panelHeader} style={{ marginBottom: '18px' }}>
-              <h3 className={styles.panelTitle}>
-                {selectedCard ? '✏️ Edit Card' : '➕ Add Showcase Card'}
-              </h3>
-              {selectedCard && (
-                <button 
-                  type="button" 
-                  onClick={handleReset}
-                  style={{ color: '#fca5a5', fontSize: '0.75rem', fontWeight: 'bold' }}
-                >
-                  Cancel
-                </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          type="button" 
+                          onClick={() => handleEdit(card)}
+                          style={{ 
+                            padding: '6px 10px', 
+                            borderRadius: '6px', 
+                            background: 'rgba(99, 102, 241, 0.1)', 
+                            color: '#818cf8', 
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => handleDelete(card.id, card.__store)}
+                          style={{ 
+                            padding: '6px 10px', 
+                            borderRadius: '6px', 
+                            background: 'rgba(239, 68, 68, 0.1)', 
+                            color: '#fca5a5', 
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
+            </article>
+          );
+        })}
+      </section>
+
+      {/* Glassmorphic Modal Input Page */}
+      {showModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.75)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 1000,
+            padding: '20px',
+            overflowY: 'auto'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleReset();
+          }}
+        >
+          <div 
+            className={`${styles.panel} ${styles.glassPanel}`}
+            style={{
+              width: 'min(100%, 520px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255,255,255,0.05)',
+              padding: '30px',
+              animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            <div className={styles.panelHeader} style={{ marginBottom: '22px' }}>
+              <h3 className={styles.panelTitle} style={{ fontSize: '1.1rem', fontWeight: 800 }}>
+                {selectedCard ? '✏️ Edit Showcase Card' : '➕ Add Showcase Card'}
+              </h3>
+              <button 
+                type="button" 
+                onClick={handleReset}
+                style={{ 
+                  color: '#fca5a5', 
+                  fontSize: '0.78rem', 
+                  fontWeight: 'bold',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.75rem', color: '#8d9bb0', fontWeight: 'bold' }}>
                   SECTION CATEGORY
@@ -345,7 +409,7 @@ export default function SolutionsManagerPage() {
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid rgba(255,255,255,0.08)',
-                    background: 'rgba(10, 16, 28, 0.6)',
+                    background: 'rgba(8, 12, 22, 0.8)',
                     color: '#fff',
                     outline: 'none'
                   }}
@@ -370,7 +434,7 @@ export default function SolutionsManagerPage() {
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid rgba(255,255,255,0.08)',
-                    background: 'rgba(10, 16, 28, 0.6)',
+                    background: 'rgba(8, 12, 22, 0.8)',
                     color: '#fff',
                     outline: 'none'
                   }}
@@ -392,7 +456,7 @@ export default function SolutionsManagerPage() {
                       padding: '12px',
                       borderRadius: '8px',
                       border: '1px solid rgba(255,255,255,0.08)',
-                      background: 'rgba(10, 16, 28, 0.6)',
+                      background: 'rgba(8, 12, 22, 0.8)',
                       color: '#fff',
                       outline: 'none'
                     }}
@@ -413,7 +477,7 @@ export default function SolutionsManagerPage() {
                       padding: '12px',
                       borderRadius: '8px',
                       border: '1px solid rgba(255,255,255,0.08)',
-                      background: 'rgba(10, 16, 28, 0.6)',
+                      background: 'rgba(8, 12, 22, 0.8)',
                       color: '#fff',
                       outline: 'none'
                     }}
@@ -437,7 +501,7 @@ export default function SolutionsManagerPage() {
                       padding: '12px',
                       borderRadius: '8px',
                       border: '1px solid rgba(255,255,255,0.08)',
-                      background: 'rgba(10, 16, 28, 0.6)',
+                      background: 'rgba(8, 12, 22, 0.8)',
                       color: '#fff',
                       outline: 'none',
                       fontSize: '0.82rem'
@@ -450,7 +514,7 @@ export default function SolutionsManagerPage() {
                     style={{
                       padding: '0 16px',
                       borderRadius: '8px',
-                      background: 'rgba(255,255,255,0.08)',
+                      background: 'rgba(255,255,255,0.06)',
                       border: '1px solid rgba(255,255,255,0.12)',
                       color: '#fff',
                       fontSize: '0.8rem',
@@ -515,7 +579,7 @@ export default function SolutionsManagerPage() {
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid rgba(255,255,255,0.08)',
-                    background: 'rgba(10, 16, 28, 0.6)',
+                    background: 'rgba(8, 12, 22, 0.8)',
                     color: '#fff',
                     outline: 'none',
                     resize: 'none'
@@ -523,7 +587,7 @@ export default function SolutionsManagerPage() {
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0' }}>
                 <input
                   type="checkbox"
                   id="enabledCheckbox"
@@ -540,7 +604,7 @@ export default function SolutionsManagerPage() {
                 type="button"
                 onClick={handleSave}
                 style={{
-                  marginTop: '10px',
+                  marginTop: '6px',
                   padding: '14px',
                   borderRadius: '8px',
                   border: 'none',
@@ -556,8 +620,8 @@ export default function SolutionsManagerPage() {
               </button>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
