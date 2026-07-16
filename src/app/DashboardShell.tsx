@@ -118,6 +118,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Why Us
             </Link>
             <Link
+              href="/stats"
+              className={`${styles.navLink} ${pathname.startsWith('/stats') ? styles.activeLink : ''}`}
+            >
+              <span className={styles.icon} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', width: '16px', height: '16px' }}>📈</span>
+              Company Stats
+            </Link>
+            <Link
               href="/solutions"
               className={`${styles.navLink} ${pathname.startsWith('/solutions') ? styles.activeLink : ''}`}
             >
