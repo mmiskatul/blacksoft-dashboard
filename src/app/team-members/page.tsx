@@ -553,11 +553,7 @@ export default function TeamMembersDashboardPage() {
               <input type="text" value={draft.imageAlt} onChange={(event) => setDraft((prev) => ({ ...prev, imageAlt: event.target.value }))} placeholder="Descriptive image alt text" style={{ ...input, marginTop: '4px', fontSize: '0.8rem' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px' }}>
-              <div>
-                <label style={label}>Logo Overlay URL</label>
-                <input type="text" value={draft.logo} onChange={(event) => setDraft((prev) => ({ ...prev, logo: event.target.value }))} placeholder="e.g. /icons/react.svg" style={input} />
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px' }}>
               <div>
                 <label style={label}>LinkedIn URL</label>
                 <input type="text" value={draft.linkedin} onChange={(event) => setDraft((prev) => ({ ...prev, linkedin: event.target.value }))} placeholder="https://linkedin.com/in/username" style={input} />
