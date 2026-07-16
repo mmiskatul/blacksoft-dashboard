@@ -28,7 +28,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [isAuthPage, router]);
 
   if (isAuthPage) return <>{children}</>;
-  if (checkingSession) return <div className={styles.sessionLoading}>Checking session…</div>;
+  if (checkingSession) return (
+    <div className={styles.sessionLoading}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: '3px solid rgba(99, 102, 241, 0.15)',
+          borderTopColor: '#6366f1',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <div style={{
+          fontSize: '0.85rem',
+          fontWeight: 600,
+          letterSpacing: '0.05em',
+          color: '#c7c4d8',
+          animation: 'pulseActive 2s infinite'
+        }}>SECURELY LOGGING IN...</div>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    </div>
+  );
 
   const getBreadcrumbs = () => {
     const isOverview = pathname === '/';

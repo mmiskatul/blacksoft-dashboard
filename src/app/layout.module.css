@@ -15,9 +15,12 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0b1220;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(11, 18, 32, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: 20;
+  transition: all 0.3s ease;
 }
 
 .sidebarHeader {
@@ -34,6 +37,10 @@
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.04em;
+  transition: transform 0.25s ease;
+}
+.logo:hover {
+  transform: scale(1.02);
 }
 
 .logo::before {
@@ -43,6 +50,11 @@
   border-radius: 9px;
   background: linear-gradient(135deg, #65e6bd, #3f8cff);
   box-shadow: 0 0 25px rgba(78, 216, 188, 0.32);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.logo:hover::before {
+  transform: rotate(90deg) scale(1.1);
+  filter: hue-rotate(15deg);
 }
 
 .sidebarNav { padding: 24px 12px; }
@@ -66,13 +78,25 @@
   color: #8794aa;
   font-size: 0.82rem;
   font-weight: 600;
-  transition: 180ms ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.navLink:hover { color: #f8fbff; background: rgba(255, 255, 255, 0.045); }
+.navLink:hover { 
+  color: #f8fbff; 
+  background: rgba(255, 255, 255, 0.06); 
+  transform: translateX(4px);
+}
+.navLink:active {
+  transform: scale(0.97) translateX(4px);
+}
 .activeLink {
-  color: #eafff8 !important;
-  background: linear-gradient(90deg, rgba(68, 211, 174, 0.16), rgba(68, 211, 174, 0.035));
-  border-color: rgba(94, 225, 190, 0.18);
+  color: #ffffff !important;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.04)) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15), inset 0 1px rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+.activeLink:hover {
+  transform: translateX(4px) scale(1.01);
 }
 .icon { width: 16px; height: 16px; flex: 0 0 auto; }
 
@@ -87,9 +111,11 @@
   justify-content: space-between;
   gap: 20px;
   padding: 0 42px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(8, 13, 24, 0.84);
-  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(8, 13, 24, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
 }
 .breadcrumbs { color: #7e8ba1; font-size: 0.76rem; font-weight: 600; }
 .breadcrumbs span { margin: 0 5px; }
@@ -112,16 +138,60 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   color: #8d9bb0;
+  transition: all 0.2s ease;
 }
-.notificationBtn:hover { color: #fff; background: rgba(255,255,255,.05); }
-.notifBadge { position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; border-radius: 50%; background: #f3b35c; }
-.profileChip { display: flex; align-items: center; gap: 9px; padding-left: 8px; color: #dce5f3; font-size: 0.78rem; font-weight: 700; }
-.avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: #dffbef; color: #12342b; font-size: 0.75rem; }
+.notificationBtn:hover { 
+  color: #fff; 
+  background: rgba(255, 255, 255, 0.06); 
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.notificationBtn:active { transform: scale(0.95); }
+.notifBadge { 
+  position: absolute; 
+  top: 7px; 
+  right: 7px; 
+  width: 6px; 
+  height: 6px; 
+  border-radius: 50%; 
+  background: #ff516a; 
+  box-shadow: 0 0 8px #ff516a;
+  animation: pulseActive 1.8s infinite;
+}
+.profileChip { 
+  display: flex; 
+  align-items: center; 
+  gap: 9px; 
+  padding: 4px 10px 4px 6px; 
+  color: #dce5f3; 
+  font-size: 0.78rem; 
+  font-weight: 700; 
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.25s ease;
+}
+.profileChip:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+.avatar { 
+  display: grid; 
+  place-items: center; 
+  width: 28px; 
+  height: 28px; 
+  border-radius: 8px; 
+  background: linear-gradient(135deg, #6366f1, #06b6d4); 
+  color: #ffffff; 
+  font-size: 0.75rem; 
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+}
 .mainContent { flex: 1; padding: 42px; background: radial-gradient(circle at 75% 0%, rgba(50, 103, 165, 0.11), transparent 30%); }
 .mobileNav { display: none; }
 
