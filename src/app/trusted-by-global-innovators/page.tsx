@@ -14,6 +14,9 @@ export default function TrustedInnovatorsPage() {
   const brandName = useSiteConfig('navbar.brand');
   const [items] = useTrustedInnovators();
   
+  // Modal visibility
+  const [showModal, setShowModal] = useState(false);
+
   // Forms & Editing states
   const [nameInput, setNameInput] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -33,16 +36,25 @@ export default function TrustedInnovatorsPage() {
       addTrustedInnovator(trimmed);
     }
     setNameInput('');
+    setShowModal(false);
   };
 
   const startEdit = (id: string, name: string) => {
     setEditingId(id);
     setNameInput(name);
+    setShowModal(true);
+  };
+
+  const startCreate = () => {
+    setEditingId(null);
+    setNameInput('');
+    setShowModal(true);
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setNameInput('');
+    setShowModal(false);
   };
 
   return (
@@ -57,6 +69,26 @@ export default function TrustedInnovatorsPage() {
             Manage client logo markings, partner names, and startup brands displayed on the homepage trusted banner.
           </p>
         </div>
+        <button 
+          onClick={startCreate}
+          style={{
+            flex: '0 0 auto',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '14px 22px',
+            border: 'none',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #6366f1 0%, #3f8cff 100%)',
+            color: '#fff',
+            fontWeight: 'bold',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.3)'
+          }}
+        >
+          <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>+</span> Add Brand Logo
+        </button>
       </header>
 
       {/* Metrics Row */}
@@ -82,104 +114,137 @@ export default function TrustedInnovatorsPage() {
         </article>
       </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(280px, 0.85fr)', gap: '24px', marginTop: '24px' }}>
-        
-        {/* Left Side: Brand Listing */}
-        <section className={`${styles.panel} ${styles.glassPanel}`}>
-          <div className={styles.panelHeader} style={{ marginBottom: '18px' }}>
-            <h3 className={styles.panelTitle}>Active Partners</h3>
-            <span className={styles.panelKicker}>Manage Display Order</span>
-          </div>
+      {/* Brand Listing */}
+      <section className={`${styles.panel} ${styles.glassPanel}`} style={{ marginTop: '24px' }}>
+        <div className={styles.panelHeader} style={{ marginBottom: '18px' }}>
+          <h3 className={styles.panelTitle}>Active Partners</h3>
+          <span className={styles.panelKicker}>Manage Display Order</span>
+        </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {items.length === 0 ? (
-              <p style={{ color: 'var(--text-light)', fontSize: '0.82rem', padding: '15px 0' }}>No partner brands added yet.</p>
-            ) : (
-              items.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '14px 16px',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(255, 255, 255, 0.04)',
-                    background: editingId === item.id ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>{item.name}</div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--text-light)', marginTop: '2px' }}>{item.id}</div>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={() => startEdit(item.id, item.name)}
-                      style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: 'rgba(99, 102, 241, 0.1)',
-                        color: '#818cf8',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      Edit Name
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateTrustedInnovator(item.id, { enabled: !item.enabled })}
-                      style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: item.enabled ? 'rgba(96, 220, 184, 0.1)' : 'rgba(255, 255, 255, 0.05)',
-                        color: item.enabled ? '#63ddb9' : '#8190a6',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {item.enabled ? 'Disable' : 'Enable'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteTrustedInnovator(item.id)}
-                      style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        color: '#fca5a5',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {items.length === 0 ? (
+            <p style={{ color: 'var(--text-light)', fontSize: '0.82rem', padding: '15px 0' }}>No partner brands added yet.</p>
+          ) : (
+            items.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 255, 255, 0.04)',
+                  background: editingId === item.id ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>{item.name}</div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-light)', marginTop: '2px' }}>{item.id}</div>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
 
-        {/* Right Side: Form Input Panel */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className={`${styles.panel} ${styles.glassPanel}`} style={{ position: 'sticky', top: '24px' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => startEdit(item.id, item.name)}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      background: 'rgba(99, 102, 241, 0.1)',
+                      color: '#818cf8',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Edit Name
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateTrustedInnovator(item.id, { enabled: !item.enabled })}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      background: item.enabled ? 'rgba(96, 220, 184, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                      color: item.enabled ? '#63ddb9' : '#8190a6',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {item.enabled ? 'Disable' : 'Enable'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteTrustedInnovator(item.id)}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      color: '#fca5a5',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Modal Popup overlay */}
+      {showModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.75)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 1000,
+            padding: '20px',
+            overflowY: 'auto'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) cancelEdit();
+          }}
+        >
+          <div 
+            className={`${styles.panel} ${styles.glassPanel}`}
+            style={{
+              width: 'min(100%, 460px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255,255,255,0.05)',
+              padding: '30px',
+              animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
             <div className={styles.panelHeader} style={{ marginBottom: '18px' }}>
               <h3 className={styles.panelTitle}>
                 {editingId ? '✏️ Edit Brand Name' : '➕ Add Partner Brand'}
               </h3>
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={cancelEdit}
-                  style={{ color: '#fca5a5', fontSize: '0.75rem', fontWeight: 'bold' }}
-                >
-                  Cancel
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={cancelEdit}
+                style={{ 
+                  color: '#fca5a5', 
+                  fontSize: '0.75rem', 
+                  fontWeight: 'bold',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -230,10 +295,8 @@ export default function TrustedInnovatorsPage() {
               </button>
             </div>
           </div>
-        </section>
-
-      </div>
+        </div>
+      )}
     </div>
   );
 }
-
