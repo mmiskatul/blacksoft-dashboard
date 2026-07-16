@@ -55,8 +55,9 @@ function createStore(apiPath: string, eventName: string) {
     finally { hydrated = true; }
   };
 
-  const ensureHydrated = () => {
-    if (typeof window === 'undefined' || hydrated || hydrationPromise) return;
+  const ensureHydrated = (force = false) => {
+    if (typeof window === 'undefined' || hydrationPromise) return;
+    if (hydrated && !force) return;
     hydrationPromise = hydrate().finally(() => { hydrationPromise = null; });
   };
 
@@ -92,7 +93,7 @@ function createStore(apiPath: string, eventName: string) {
       window.addEventListener(eventName, onStoreChange);
       return () => { listeners.delete(onStoreChange); window.removeEventListener(eventName, onStoreChange); };
     }, []);
-    React.useEffect(() => { ensureHydrated(); }, []);
+    React.useEffect(() => { ensureHydrated(true); }, []);
     const cards = React.useSyncExternalStore(subscribe, get, () => empty);
     const setCards = React.useCallback<React.Dispatch<React.SetStateAction<SolutionCard[]>>>((value) => notify(typeof value === 'function' ? value(get()) : value), []);
     return [cards, setCards];

@@ -44,6 +44,12 @@ function normalizeCard(item: Partial<EcommerceCard>, index: number): EcommerceCa
     : typeof raw.image_alt === 'string'
       ? raw.image_alt
       : 'Ecommerce card image';
+  
+  const isPlaceholder = typeof item.isPlaceholder === 'boolean'
+    ? item.isPlaceholder
+    : typeof raw.is_placeholder === 'boolean'
+      ? raw.is_placeholder
+      : false;
 
   return {
     id: typeof item.id === 'string' && item.id.trim() ? item.id : createId(typeof item.title === 'string' ? item.title : `card-${index + 1}`),
@@ -51,7 +57,7 @@ function normalizeCard(item: Partial<EcommerceCard>, index: number): EcommerceCa
     description: typeof item.description === 'string' && item.description.trim() ? item.description.trim() : 'No description provided.',
     imageSrc: imageSrc.trim(),
     imageAlt: imageAlt.trim() || 'Ecommerce card image',
-    isPlaceholder: typeof item.isPlaceholder === 'boolean' ? item.isPlaceholder : false,
+    isPlaceholder,
     enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
   };
 }
@@ -89,8 +95,11 @@ async function hydrateFromApi(): Promise<void> {
   }
 }
 
-function ensureHydrated() {
-  if (typeof window === 'undefined' || hydrated || hydrationPromise) {
+function ensureHydrated(force = false) {
+  if (typeof window === 'undefined' || hydrationPromise) {
+    return;
+  }
+  if (hydrated && !force) {
     return;
   }
 
@@ -218,7 +227,7 @@ export function useEcommerceCards(): [EcommerceCard[], React.Dispatch<React.SetS
   }, []);
 
   React.useEffect(() => {
-    ensureHydrated();
+    ensureHydrated(true);
   }, []);
 
   const cards = React.useSyncExternalStore(

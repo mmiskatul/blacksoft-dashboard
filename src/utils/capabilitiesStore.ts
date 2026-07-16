@@ -74,8 +74,11 @@ async function hydrateFromApi(): Promise<void> {
   }
 }
 
-function ensureHydrated() {
-  if (typeof window === 'undefined' || hydrated || hydrationPromise) {
+function ensureHydrated(force = false) {
+  if (typeof window === 'undefined' || hydrationPromise) {
+    return;
+  }
+  if (hydrated && !force) {
     return;
   }
 
@@ -196,7 +199,7 @@ export function useCapabilityCards(): [CapabilityCard[], React.Dispatch<React.Se
   }, []);
 
   React.useEffect(() => {
-    ensureHydrated();
+    ensureHydrated(true);
   }, []);
 
   const cards = React.useSyncExternalStore(

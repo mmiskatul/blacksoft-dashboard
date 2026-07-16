@@ -131,8 +131,11 @@ async function hydrateSettingsFromApi(): Promise<void> {
   }
 }
 
-function ensureCardsHydrated() {
-  if (typeof window === 'undefined' || cardsHydrated || cardsHydrationPromise) {
+function ensureCardsHydrated(force = false) {
+  if (typeof window === 'undefined' || cardsHydrationPromise) {
+    return;
+  }
+  if (cardsHydrated && !force) {
     return;
   }
 
@@ -141,8 +144,11 @@ function ensureCardsHydrated() {
   });
 }
 
-function ensureSettingsHydrated() {
-  if (typeof window === 'undefined' || settingsHydrated || settingsHydrationPromise) {
+function ensureSettingsHydrated(force = false) {
+  if (typeof window === 'undefined' || settingsHydrationPromise) {
+    return;
+  }
+  if (settingsHydrated && !force) {
     return;
   }
 
@@ -296,7 +302,7 @@ export function useTechnologyStackCards() {
   }, []);
 
   React.useEffect(() => {
-    ensureCardsHydrated();
+    ensureCardsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(
@@ -318,7 +324,7 @@ export function useTechnologyStackSettings() {
   }, []);
 
   React.useEffect(() => {
-    ensureSettingsHydrated();
+    ensureSettingsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(

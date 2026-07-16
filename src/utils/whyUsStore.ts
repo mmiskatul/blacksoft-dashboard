@@ -38,17 +38,21 @@ function normalizeCards(cards: unknown): WhyUsCard[] {
 
   return cards
     .filter((item): item is Partial<WhyUsCard> => Boolean(item && typeof item === 'object'))
-    .map((item, index) => ({
-      id: typeof item.id === 'string' && item.id.trim() ? item.id : createId(item.title || `whyus-${index + 1}`),
-      title: typeof item.title === 'string' && item.title.trim() ? item.title.trim() : `Benefit ${index + 1}`,
-      description: typeof item.description === 'string' && item.description.trim()
-        ? item.description.trim()
-        : 'No description provided.',
-      icon: typeof item.icon === 'string' && item.icon.trim() ? item.icon.trim() : '⚡',
-      imageSrc: typeof item.imageSrc === 'string' ? item.imageSrc.trim() : '',
-      imageAlt: typeof item.imageAlt === 'string' ? item.imageAlt.trim() : '',
-      enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
-    }));
+    .map((item, index) => {
+      const imageSrc = item.imageSrc ?? (item as any).image_src;
+      const imageAlt = item.imageAlt ?? (item as any).image_alt;
+      return {
+        id: typeof item.id === 'string' && item.id.trim() ? item.id : createId(item.title || `whyus-${index + 1}`),
+        title: typeof item.title === 'string' && item.title.trim() ? item.title.trim() : `Benefit ${index + 1}`,
+        description: typeof item.description === 'string' && item.description.trim()
+          ? item.description.trim()
+          : 'No description provided.',
+        icon: typeof item.icon === 'string' && item.icon.trim() ? item.icon.trim() : '⚡',
+        imageSrc: typeof imageSrc === 'string' ? imageSrc.trim() : '',
+        imageAlt: typeof imageAlt === 'string' ? imageAlt.trim() : '',
+        enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
+      };
+    });
 }
 
 function persistCache(cards: WhyUsCard[]) {
@@ -74,8 +78,11 @@ async function hydrateFromApi(): Promise<void> {
   }
 }
 
-function ensureHydrated() {
-  if (typeof window === 'undefined' || hydrated || hydrationPromise) {
+function ensureHydrated(force = false) {
+  if (typeof window === 'undefined' || hydrationPromise) {
+    return;
+  }
+  if (hydrated && !force) {
     return;
   }
 
@@ -88,7 +95,7 @@ export function useWhyUsCards(): [WhyUsCard[], boolean] {
   const [cards, setCards] = React.useState<WhyUsCard[]>(cachedCardsValue);
 
   React.useEffect(() => {
-    ensureHydrated();
+    ensureHydrated(true);
 
     const handleUpdate = () => {
       setCards(cachedCardsValue);
