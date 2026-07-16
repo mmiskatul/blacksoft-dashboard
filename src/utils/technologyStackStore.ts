@@ -7,7 +7,15 @@ export type TechnologyStackIconKey =
   | 'growth'
   | 'hardware'
   | 'orchestration'
-  | 'frontend';
+  | 'frontend'
+  | 'backend'
+  | 'mobile'
+  | 'database'
+  | 'cloud'
+  | 'ai'
+  | 'design'
+  | 'devops'
+  | 'testing';
 
 export interface TechnologyStackCard {
   id: string;
@@ -43,14 +51,13 @@ const listeners = new Set<() => void>();
 
 function normalizeCard(card: Partial<TechnologyStackCard>, index = 0): TechnologyStackCard {
   const iconKey = card.iconKey ?? (card as { icon_key?: unknown }).icon_key;
+  const validKeys: TechnologyStackIconKey[] = ['growth', 'hardware', 'orchestration', 'frontend', 'backend', 'mobile', 'database', 'cloud', 'ai', 'design', 'devops', 'testing'];
   return {
     id: typeof card.id === 'string' && card.id.trim() ? card.id : `stack-card-${index + 1}`,
     title: typeof card.title === 'string' && card.title.trim() ? card.title.trim() : `Card ${index + 1}`,
     category: typeof card.category === 'string' && card.category.trim() ? card.category.trim() : 'CATEGORY',
     description: typeof card.description === 'string' && card.description.trim() ? card.description.trim() : 'No description provided.',
-    iconKey: (iconKey === 'growth' || iconKey === 'hardware' || iconKey === 'orchestration' || iconKey === 'frontend')
-      ? iconKey
-      : 'growth',
+    iconKey: validKeys.includes(iconKey as TechnologyStackIconKey) ? (iconKey as TechnologyStackIconKey) : 'growth',
     enabled: typeof card.enabled === 'boolean' ? card.enabled : true,
   };
 }
