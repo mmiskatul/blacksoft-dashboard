@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import styles from '../page.module.css';
 import { 
   useAppWebsiteCards, 
@@ -9,10 +9,13 @@ import {
   aiSolutionStore,
   type SolutionCard 
 } from '../../utils/solutionCardsStore';
+import { uploadImageToCloudinary } from '../../utils/apiClient';
 
 export default function SolutionsManagerPage() {
   const [appCards] = useAppWebsiteCards();
   const [aiCards] = useAiSolutionCards();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Selected card for editing
   const [selectedCard, setSelectedCard] = useState<SolutionCard | null>(null);
@@ -26,7 +29,11 @@ export default function SolutionsManagerPage() {
   const [draftCategory, setDraftCategory] = useState('App');
   const [draftIcon, setDraftIcon] = useState('🧠');
   const [draftLink, setDraftLink] = useState('#solutions');
+  const [draftImageSrc, setDraftImageSrc] = useState('');
+  const [draftImageAlt, setDraftImageAlt] = useState('');
   const [draftEnabled, setDraftEnabled] = useState(true);
+  
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Combine and normalize categories for sorting/display
   const allCards = useMemo(() => {
@@ -44,6 +51,7 @@ export default function SolutionsManagerPage() {
     setOriginalStore(card.__store);
     setDraftTitle(card.title);
     setDraftDescription(card.description);
+    
     // Map internal key to dropdown
     let cat = card.category;
     const lower = cat.toLowerCase();
@@ -56,6 +64,8 @@ export default function SolutionsManagerPage() {
     setDraftCategory(cat);
     setDraftIcon(card.icon);
     setDraftLink(card.link);
+    setDraftImageSrc(card.imageSrc || '');
+    setDraftImageAlt(card.imageAlt || '');
     setDraftEnabled(card.enabled);
   };
 
@@ -68,7 +78,23 @@ export default function SolutionsManagerPage() {
     setDraftCategory('App');
     setDraftIcon('🧠');
     setDraftLink('#solutions');
+    setDraftImageSrc('');
+    setDraftImageAlt('');
     setDraftEnabled(true);
+  };
+
+  // Handle image file upload
+  const handleImageUpload = async (file: File) => {
+    try {
+      setUploadingImage(true);
+      const res = await uploadImageToCloudinary(file);
+      setDraftImageSrc(res.secureUrl);
+      setDraftImageAlt(file.name.split('.')[0] || 'Solution showcase image');
+    } catch (err: any) {
+      alert(err.message || 'Failed to upload image.');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   // Save changes (Create or Update)
@@ -91,6 +117,8 @@ export default function SolutionsManagerPage() {
           category: draftCategory,
           icon: draftIcon.trim(),
           link: draftLink.trim(),
+          imageSrc: draftImageSrc.trim(),
+          imageAlt: draftImageAlt.trim(),
           enabled: draftEnabled
         });
       } else {
@@ -104,7 +132,9 @@ export default function SolutionsManagerPage() {
           draftDescription.trim(),
           draftCategory,
           draftIcon.trim(),
-          draftLink.trim()
+          draftLink.trim(),
+          draftImageSrc.trim(),
+          draftImageAlt.trim()
         );
       }
     } else {
@@ -114,7 +144,9 @@ export default function SolutionsManagerPage() {
         draftDescription.trim(),
         draftCategory,
         draftIcon.trim(),
-        draftLink.trim()
+        draftLink.trim(),
+        draftImageSrc.trim(),
+        draftImageAlt.trim()
       );
     }
 
@@ -200,32 +232,47 @@ export default function SolutionsManagerPage() {
                           border: '1px solid rgba(255,255,255,0.04)' 
                         }}
                       >
-                        <div style={{ flex: 1, paddingRight: '12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '1.1rem' }}>{card.icon}</span>
-                            <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{card.title}</strong>
-                            <span 
-                              onClick={() => handleToggleEnabled(card)}
+                        <div style={{ flex: 1, paddingRight: '12px', display: 'flex', gap: '14px', alignItems: 'start' }}>
+                          {card.imageSrc && (
+                            <img 
+                              src={card.imageSrc} 
+                              alt={card.imageAlt || card.title} 
                               style={{ 
-                                fontSize: '0.68rem', 
-                                padding: '2px 6px', 
-                                borderRadius: '4px', 
-                                cursor: 'pointer',
-                                background: card.enabled ? 'rgba(96,220,184,0.1)' : 'rgba(255,255,255,0.05)',
-                                color: card.enabled ? '#63ddb9' : '#8190a6'
-                              }}
-                            >
-                              {card.enabled ? 'Enabled' : 'Disabled'}
-                            </span>
-                          </div>
-                          <p style={{ color: 'var(--text-light)', fontSize: '0.78rem', marginTop: '6px', lineHeight: 1.4 }}>
-                            {card.description}
-                          </p>
-                          {card.link && card.link !== '#solutions' && (
-                            <small style={{ color: '#6366f1', fontSize: '0.7rem', display: 'block', marginTop: '4px' }}>
-                              Link: {card.link}
-                            </small>
+                                width: '64px', 
+                                height: '64px', 
+                                borderRadius: '8px', 
+                                objectFit: 'cover',
+                                border: '1px solid rgba(255,255,255,0.08)'
+                              }} 
+                            />
                           )}
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '1.1rem' }}>{card.icon}</span>
+                              <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{card.title}</strong>
+                              <span 
+                                onClick={() => handleToggleEnabled(card)}
+                                style={{ 
+                                  fontSize: '0.68rem', 
+                                  padding: '2px 6px', 
+                                  borderRadius: '4px', 
+                                  cursor: 'pointer',
+                                  background: card.enabled ? 'rgba(96,220,184,0.1)' : 'rgba(255,255,255,0.05)',
+                                  color: card.enabled ? '#63ddb9' : '#8190a6'
+                                }}
+                              >
+                                {card.enabled ? 'Enabled' : 'Disabled'}
+                              </span>
+                            </div>
+                            <p style={{ color: 'var(--text-light)', fontSize: '0.78rem', marginTop: '6px', lineHeight: 1.4 }}>
+                              {card.description}
+                            </p>
+                            {card.link && card.link !== '#solutions' && (
+                              <small style={{ color: '#6366f1', fontSize: '0.7rem', display: 'block', marginTop: '4px' }}>
+                                Link: {card.link}
+                              </small>
+                            )}
+                          </div>
                         </div>
 
                         <div style={{ display: 'flex', gap: '8px' }}>
@@ -372,6 +419,86 @@ export default function SolutionsManagerPage() {
                     }}
                   />
                 </div>
+              </div>
+
+              {/* Image Upload Block */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.75rem', color: '#8d9bb0', fontWeight: 'bold' }}>
+                  SHOWCASE IMAGE
+                </label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch' }}>
+                  <input
+                    type="text"
+                    value={draftImageSrc}
+                    onChange={(e) => setDraftImageSrc(e.target.value)}
+                    placeholder="Paste URL or click Upload"
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      background: 'rgba(10, 16, 28, 0.6)',
+                      color: '#fff',
+                      outline: 'none',
+                      fontSize: '0.82rem'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    style={{
+                      padding: '0 16px',
+                      borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      color: '#fff',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {uploadingImage ? 'Uploading...' : 'Upload'}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(file);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+
+                {draftImageSrc && (
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <img 
+                      src={draftImageSrc} 
+                      alt="Uploaded preview" 
+                      style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} 
+                    />
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        value={draftImageAlt}
+                        onChange={(e) => setDraftImageAlt(e.target.value)}
+                        placeholder="Image alt description"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          borderRadius: '6px',
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          background: 'rgba(255,255,255,0.02)',
+                          color: '#fff',
+                          outline: 'none',
+                          fontSize: '0.78rem'
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
