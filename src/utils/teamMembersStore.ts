@@ -12,6 +12,8 @@ export interface TeamMember {
   logo: string;
   bio: string;
   link: string;
+  linkedin: string;
+  github: string;
   enabled: boolean;
 }
 
@@ -55,6 +57,8 @@ function normalizeMember(member: Partial<TeamMember>, index = 0): TeamMember {
     logo: typeof member.logo === 'string' && member.logo.trim() ? member.logo.trim() : '',
     bio: typeof member.bio === 'string' && member.bio.trim() ? member.bio.trim() : '',
     link: typeof member.link === 'string' && member.link.trim() ? member.link.trim() : '',
+    linkedin: typeof member.linkedin === 'string' && member.linkedin.trim() ? member.linkedin.trim() : '',
+    github: typeof member.github === 'string' && member.github.trim() ? member.github.trim() : '',
     enabled: typeof member.enabled === 'boolean' ? member.enabled : true,
   };
 }
@@ -124,8 +128,11 @@ async function hydrateSettingsFromApi(): Promise<void> {
   }
 }
 
-function ensureMembersHydrated() {
-  if (typeof window === 'undefined' || membersHydrated || membersHydrationPromise) {
+function ensureMembersHydrated(force = false) {
+  if (typeof window === 'undefined' || membersHydrationPromise) {
+    return;
+  }
+  if (membersHydrated && !force) {
     return;
   }
 
@@ -134,8 +141,11 @@ function ensureMembersHydrated() {
   });
 }
 
-function ensureSettingsHydrated() {
-  if (typeof window === 'undefined' || settingsHydrated || settingsHydrationPromise) {
+function ensureSettingsHydrated(force = false) {
+  if (typeof window === 'undefined' || settingsHydrationPromise) {
+    return;
+  }
+  if (settingsHydrated && !force) {
     return;
   }
 
@@ -190,7 +200,7 @@ export function setTeamSettings(settings: TeamSectionSettings) {
   });
 }
 
-export function addTeamMember(name: string, role: string, imageSrc: string, imageAlt: string, logo: string, bio: string, link: string) {
+export function addTeamMember(name: string, role: string, imageSrc: string, imageAlt: string, logo: string, bio: string, link: string, linkedin: string, github: string) {
   const optimisticMember: TeamMember = {
     id: `team-member-${Date.now()}`,
     name: name.trim(),
@@ -200,6 +210,8 @@ export function addTeamMember(name: string, role: string, imageSrc: string, imag
     logo: logo.trim(),
     bio: bio.trim(),
     link: link.trim(),
+    linkedin: linkedin.trim(),
+    github: github.trim(),
     enabled: true,
   };
 
@@ -216,6 +228,8 @@ export function addTeamMember(name: string, role: string, imageSrc: string, imag
       logo: optimisticMember.logo,
       bio: optimisticMember.bio,
       link: optimisticMember.link,
+      linkedin: optimisticMember.linkedin,
+      github: optimisticMember.github,
       enabled: optimisticMember.enabled,
     }),
   }).then((created) => {
@@ -276,7 +290,7 @@ export function useTeamMembers() {
   }, []);
 
   React.useEffect(() => {
-    ensureMembersHydrated();
+    ensureMembersHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(
@@ -298,7 +312,7 @@ export function useTeamSettings() {
   }, []);
 
   React.useEffect(() => {
-    ensureSettingsHydrated();
+    ensureSettingsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(

@@ -7,7 +7,15 @@ export type TechnologyStackIconKey =
   | 'growth'
   | 'hardware'
   | 'orchestration'
-  | 'frontend';
+  | 'frontend'
+  | 'backend'
+  | 'mobile'
+  | 'database'
+  | 'cloud'
+  | 'ai'
+  | 'design'
+  | 'devops'
+  | 'testing';
 
 export interface TechnologyStackCard {
   id: string;
@@ -15,6 +23,8 @@ export interface TechnologyStackCard {
   category: string;
   description: string;
   iconKey: TechnologyStackIconKey;
+  imageSrc?: string;
+  imageAlt?: string;
   enabled: boolean;
 }
 
@@ -43,14 +53,17 @@ const listeners = new Set<() => void>();
 
 function normalizeCard(card: Partial<TechnologyStackCard>, index = 0): TechnologyStackCard {
   const iconKey = card.iconKey ?? (card as { icon_key?: unknown }).icon_key;
+  const imageSrc = card.imageSrc ?? (card as { image_src?: unknown }).image_src;
+  const imageAlt = card.imageAlt ?? (card as { image_alt?: unknown }).image_alt;
+  const validKeys: TechnologyStackIconKey[] = ['growth', 'hardware', 'orchestration', 'frontend', 'backend', 'mobile', 'database', 'cloud', 'ai', 'design', 'devops', 'testing'];
   return {
     id: typeof card.id === 'string' && card.id.trim() ? card.id : `stack-card-${index + 1}`,
     title: typeof card.title === 'string' && card.title.trim() ? card.title.trim() : `Card ${index + 1}`,
     category: typeof card.category === 'string' && card.category.trim() ? card.category.trim() : 'CATEGORY',
     description: typeof card.description === 'string' && card.description.trim() ? card.description.trim() : 'No description provided.',
-    iconKey: (iconKey === 'growth' || iconKey === 'hardware' || iconKey === 'orchestration' || iconKey === 'frontend')
-      ? iconKey
-      : 'growth',
+    iconKey: validKeys.includes(iconKey as TechnologyStackIconKey) ? (iconKey as TechnologyStackIconKey) : 'growth',
+    imageSrc: typeof imageSrc === 'string' ? imageSrc.trim() : '',
+    imageAlt: typeof imageAlt === 'string' ? imageAlt.trim() : '',
     enabled: typeof card.enabled === 'boolean' ? card.enabled : true,
   };
 }
@@ -118,8 +131,11 @@ async function hydrateSettingsFromApi(): Promise<void> {
   }
 }
 
-function ensureCardsHydrated() {
-  if (typeof window === 'undefined' || cardsHydrated || cardsHydrationPromise) {
+function ensureCardsHydrated(force = false) {
+  if (typeof window === 'undefined' || cardsHydrationPromise) {
+    return;
+  }
+  if (cardsHydrated && !force) {
     return;
   }
 
@@ -128,8 +144,11 @@ function ensureCardsHydrated() {
   });
 }
 
-function ensureSettingsHydrated() {
-  if (typeof window === 'undefined' || settingsHydrated || settingsHydrationPromise) {
+function ensureSettingsHydrated(force = false) {
+  if (typeof window === 'undefined' || settingsHydrationPromise) {
+    return;
+  }
+  if (settingsHydrated && !force) {
     return;
   }
 
@@ -196,7 +215,9 @@ export function addTechnologyStackCard(
   title: string,
   category: string,
   description: string,
-  iconKey: TechnologyStackIconKey
+  iconKey: TechnologyStackIconKey,
+  imageSrc = '',
+  imageAlt = ''
 ) {
   const optimisticCard: TechnologyStackCard = {
     id: createId(title),
@@ -204,6 +225,8 @@ export function addTechnologyStackCard(
     category: category.trim(),
     description: description.trim(),
     iconKey,
+    imageSrc,
+    imageAlt,
     enabled: true,
   };
 
@@ -217,6 +240,8 @@ export function addTechnologyStackCard(
       category: optimisticCard.category,
       description: optimisticCard.description,
       iconKey: optimisticCard.iconKey,
+      imageSrc: optimisticCard.imageSrc,
+      imageAlt: optimisticCard.imageAlt,
       enabled: optimisticCard.enabled,
     }),
   }).then((created) => {
@@ -277,7 +302,7 @@ export function useTechnologyStackCards() {
   }, []);
 
   React.useEffect(() => {
-    ensureCardsHydrated();
+    ensureCardsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(
@@ -299,7 +324,7 @@ export function useTechnologyStackSettings() {
   }, []);
 
   React.useEffect(() => {
-    ensureSettingsHydrated();
+    ensureSettingsHydrated(true);
   }, []);
 
   return React.useSyncExternalStore(

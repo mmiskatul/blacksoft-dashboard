@@ -7,13 +7,13 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_API_BASE_URL=https://api.blacksoft.site/api
-ARG NEXT_PUBLIC_PUBLIC_SITE_URL=http://localhost:3000
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_PUBLIC_SITE_URL=$NEXT_PUBLIC_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_PUBLIC_SITE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN if [ -n "$NEXT_PUBLIC_API_BASE_URL" ]; then export NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL; fi && \
+    if [ -n "$NEXT_PUBLIC_PUBLIC_SITE_URL" ]; then export NEXT_PUBLIC_PUBLIC_SITE_URL=$NEXT_PUBLIC_PUBLIC_SITE_URL; fi && \
+    npm run build
 
 FROM gcr.io/distroless/nodejs20-debian12 AS runner
 WORKDIR /app

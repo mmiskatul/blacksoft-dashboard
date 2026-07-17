@@ -48,6 +48,9 @@ export default function WhatWeDoPage() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Delete confirmation modal state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
   const visibleCount = useMemo(() => cards.filter((card) => card.enabled).length, [cards]);
   const hiddenCount = cards.length - visibleCount;
   const selectedCard = cards.find((card) => card.id === selectedId) ?? null;
@@ -104,18 +107,18 @@ export default function WhatWeDoPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this service? This cannot be undone.')) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!deleteConfirmId) return;
 
     try {
-      await deleteServiceCard(id);
-      if (selectedId === id) {
+      await deleteServiceCard(deleteConfirmId);
+      if (selectedId === deleteConfirmId) {
         closeEditor();
       }
     } catch {
       alert('Failed to delete service.');
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -176,7 +179,7 @@ export default function WhatWeDoPage() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', flexDirection: editorOpen ? 'row' : 'column' }}>
+      <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', flexDirection: 'column', width: '100%' }}>
         {/* Cards Grid / List */}
         <div style={{ flex: 1, width: '100%' }}>
           {!hydrated && <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>Loading cards…</div>}
@@ -195,7 +198,7 @@ export default function WhatWeDoPage() {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: editorOpen ? '1fr' : 'repeat(2, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', width: '100%' }}>
             {cards.map((card) => {
               const isActive = card.id === selectedId;
               return (
@@ -239,7 +242,7 @@ export default function WhatWeDoPage() {
                           </svg>
                         )}
                       </IconButton>
-                      <IconButton label="Delete card" onClick={() => handleDelete(card.id)}>
+                      <IconButton label="Delete card" onClick={() => setDeleteConfirmId(card.id)}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M3 6h18" />
                           <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -280,152 +283,246 @@ export default function WhatWeDoPage() {
           </div>
         </div>
 
-        {/* Editor Form panel */}
+        {/* Editor Form Modal */}
         {editorOpen && (
-          <div
+          <div 
             style={{
-              width: '380px',
-              flexShrink: 0,
-              background: 'var(--bg-card-high)',
-              border: '1px solid var(--border-card)',
-              borderRadius: '20px',
-              padding: '24px',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
-              animation: 'fadeInRight 0.3s ease-out',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(4, 6, 12, 0.75)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              display: 'grid',
+              placeItems: 'center',
+              zIndex: 1000,
+              padding: '20px',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) closeEditor();
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-white)' }}>
-                {selectedId ? 'Edit Service' : 'New Service'}
-              </h2>
-              <button
-                type="button"
-                onClick={closeEditor}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '18px',
-                  cursor: 'pointer',
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleSave} style={{ display: 'grid', gap: '16px' }}>
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                  Icon Emoji *
-                </label>
-                <input
-                  required
-                  type="text"
-                  maxLength={10}
-                  value={draft.icon}
-                  onChange={(e) => setDraft({ ...draft, icon: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-card)',
-                    background: 'rgba(255,255,255,0.03)',
-                    color: 'var(--text-white)',
-                    fontSize: '14px',
-                    outline: 'none',
-                  }}
-                  placeholder="e.g. 🤖, 💻, 📊"
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                  Service Title *
-                </label>
-                <input
-                  required
-                  type="text"
-                  maxLength={120}
-                  value={draft.title}
-                  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-card)',
-                    background: 'rgba(255,255,255,0.03)',
-                    color: 'var(--text-white)',
-                    fontSize: '14px',
-                    outline: 'none',
-                  }}
-                  placeholder="e.g. AI Workflow Systems"
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                  Description *
-                </label>
-                <textarea
-                  required
-                  maxLength={1000}
-                  value={draft.description}
-                  onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-                  rows={6}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-card)',
-                    background: 'rgba(255,255,255,0.03)',
-                    color: 'var(--text-white)',
-                    fontSize: '13px',
-                    lineHeight: 1.6,
-                    outline: 'none',
-                    resize: 'vertical',
-                  }}
-                  placeholder="Describe this service or cognitive capability…"
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '8px' }}>
+            <div
+              style={{
+                width: 'min(100%, 460px)',
+                background: 'rgba(12, 19, 33, 0.95)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255,255,255,0.05)',
+                borderRadius: '20px',
+                padding: '30px',
+                animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-white)' }}>
+                  {selectedId ? 'Edit Service' : 'New Service'}
+                </h2>
                 <button
                   type="button"
                   onClick={closeEditor}
                   style={{
-                    padding: '9px 16px',
-                    borderRadius: '8px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-card)',
+                    background: 'transparent',
+                    border: 'none',
                     color: 'var(--text-muted)',
-                    fontWeight: 600,
-                    fontSize: '13px',
+                    fontSize: '18px',
                     cursor: 'pointer',
                   }}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  style={{
-                    padding: '9px 20px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)',
-                    color: '#ffffff',
-                    fontWeight: 600,
-                    fontSize: '13px',
-                    border: 'none',
-                    cursor: saving ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {saving ? 'Saving…' : 'Save Card'}
+                  ×
                 </button>
               </div>
-            </form>
+
+              <form onSubmit={handleSave} style={{ display: 'grid', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                    Icon Emoji *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    maxLength={10}
+                    value={draft.icon}
+                    onChange={(e) => setDraft({ ...draft, icon: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-card)',
+                      background: 'rgba(255,255,255,0.03)',
+                      color: 'var(--text-white)',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
+                    placeholder="e.g. 🤖, 💻, 📊"
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                    Service Title *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    maxLength={120}
+                    value={draft.title}
+                    onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-card)',
+                      background: 'rgba(255,255,255,0.03)',
+                      color: 'var(--text-white)',
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
+                    placeholder="e.g. AI Workflow Systems"
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                    Description *
+                  </label>
+                  <textarea
+                    required
+                    maxLength={1000}
+                    value={draft.description}
+                    onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+                    rows={6}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-card)',
+                      background: 'rgba(255,255,255,0.03)',
+                      color: 'var(--text-white)',
+                      fontSize: '13px',
+                      lineHeight: 1.6,
+                      outline: 'none',
+                      resize: 'none',
+                    }}
+                    placeholder="Describe this service or cognitive capability…"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={closeEditor}
+                    style={{
+                      padding: '9px 16px',
+                      borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid var(--border-card)',
+                      color: 'var(--text-muted)',
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    style={{
+                      padding: '9px 20px',
+                      borderRadius: '8px',
+                      background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)',
+                      color: '#ffffff',
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      border: 'none',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {saving ? 'Saving…' : 'Save Card'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.8)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 3000,
+            padding: '20px'
+          }}
+        >
+          <div 
+            style={{
+              width: 'min(100%, 400px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8)',
+              padding: '30px',
+              textAlign: 'center',
+              borderRadius: '20px',
+              animation: 'slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚠️</div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>Confirm Deletion</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-light)', lineHeight: 1.5, marginBottom: '24px' }}>
+              Are you sure you want to permanently delete this service? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'var(--text-muted)',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

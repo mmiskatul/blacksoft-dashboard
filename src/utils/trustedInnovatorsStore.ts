@@ -67,8 +67,11 @@ async function hydrateFromApi(): Promise<void> {
   }
 }
 
-function ensureHydrated() {
-  if (typeof window === 'undefined' || hydrated || hydrationPromise) {
+function ensureHydrated(force = false) {
+  if (typeof window === 'undefined' || hydrationPromise) {
+    return;
+  }
+  if (hydrated && !force) {
     return;
   }
 
@@ -169,7 +172,7 @@ export function useTrustedInnovators(): [TrustedInnovator[], React.Dispatch<Reac
   }, []);
 
   React.useEffect(() => {
-    ensureHydrated();
+    ensureHydrated(true);
   }, []);
 
   const items = React.useSyncExternalStore(

@@ -10,10 +10,12 @@ export type SolutionCard = {
   category: string;
   icon: string;
   link: string;
+  imageSrc?: string;
+  imageAlt?: string;
   enabled: boolean;
 };
 
-type Patch = Partial<Pick<SolutionCard, 'title' | 'description' | 'category' | 'icon' | 'link' | 'enabled'>>;
+type Patch = Partial<Pick<SolutionCard, 'title' | 'description' | 'category' | 'icon' | 'link' | 'imageSrc' | 'imageAlt' | 'enabled'>>;
 
 function createStore(apiPath: string, eventName: string) {
   const empty: SolutionCard[] = [];
@@ -36,6 +38,8 @@ function createStore(apiPath: string, eventName: string) {
       category: typeof item.category === 'string' && item.category.trim() ? item.category.trim() : 'App',
       icon: typeof item.icon === 'string' && item.icon.trim() ? item.icon.trim() : 'AI',
       link: typeof item.link === 'string' && item.link.trim() ? item.link.trim() : '#solutions',
+      imageSrc: typeof item.imageSrc === 'string' ? item.imageSrc.trim() : '',
+      imageAlt: typeof item.imageAlt === 'string' ? item.imageAlt.trim() : '',
       enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
     }));
 
@@ -51,14 +55,25 @@ function createStore(apiPath: string, eventName: string) {
     finally { hydrated = true; }
   };
 
-  const ensureHydrated = () => {
-    if (typeof window === 'undefined' || hydrated || hydrationPromise) return;
+  const ensureHydrated = (force = false) => {
+    if (typeof window === 'undefined' || hydrationPromise) return;
+    if (hydrated && !force) return;
     hydrationPromise = hydrate().finally(() => { hydrationPromise = null; });
   };
 
   const get = () => { ensureHydrated(); return cached; };
-  const add = (title: string, description: string, category: string, icon: string, link: string) => {
-    const optimistic: SolutionCard = { id: `draft-${Date.now()}`, title: title.trim(), description: description.trim(), category: category.trim() || 'App', icon: icon.trim() || 'AI', link: link.trim() || '#solutions', enabled: true };
+  const add = (title: string, description: string, category: string, icon: string, link: string, imageSrc?: string, imageAlt?: string) => {
+    const optimistic: SolutionCard = { 
+      id: `draft-${Date.now()}`, 
+      title: title.trim(), 
+      description: description.trim(), 
+      category: category.trim() || 'App', 
+      icon: icon.trim() || 'AI', 
+      link: link.trim() || '#solutions', 
+      imageSrc: imageSrc?.trim() || '',
+      imageAlt: imageAlt?.trim() || '',
+      enabled: true 
+    };
     notify([...get(), optimistic]);
     void apiRequest<SolutionCard>(apiPath, { method: 'POST', body: JSON.stringify(optimistic) })
       .then((created) => notify(get().map((card) => card.id === optimistic.id ? normalize([created])[0] : card)));
@@ -78,7 +93,7 @@ function createStore(apiPath: string, eventName: string) {
       window.addEventListener(eventName, onStoreChange);
       return () => { listeners.delete(onStoreChange); window.removeEventListener(eventName, onStoreChange); };
     }, []);
-    React.useEffect(() => { ensureHydrated(); }, []);
+    React.useEffect(() => { ensureHydrated(true); }, []);
     const cards = React.useSyncExternalStore(subscribe, get, () => empty);
     const setCards = React.useCallback<React.Dispatch<React.SetStateAction<SolutionCard[]>>>((value) => notify(typeof value === 'function' ? value(get()) : value), []);
     return [cards, setCards];

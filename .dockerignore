@@ -2,5 +2,7 @@ node_modules
 .next
 out
 .git
-.env*
+.env.example
+.env.local
+.env.*.local
 *.log

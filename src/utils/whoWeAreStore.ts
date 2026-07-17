@@ -38,16 +38,24 @@ const listeners = new Set<() => void>();
 
 function normalizeSettings(settings: Partial<WhoWeAreSettings> | null | undefined): WhoWeAreSettings {
   if (!settings) return DEFAULT_SETTINGS;
+  const raw = settings as any;
+  const h1Num = settings.highlight1Num ?? raw.highlight1_num;
+  const h1Label = settings.highlight1Label ?? raw.highlight1_label;
+  const h2Num = settings.highlight2Num ?? raw.highlight2_num;
+  const h2Label = settings.highlight2Label ?? raw.highlight2_label;
+  const h3Num = settings.highlight3Num ?? raw.highlight3_num;
+  const h3Label = settings.highlight3Label ?? raw.highlight3_label;
+
   return {
     tag: typeof settings.tag === 'string' ? settings.tag.trim() : DEFAULT_SETTINGS.tag,
     title: typeof settings.title === 'string' ? settings.title.trim() : DEFAULT_SETTINGS.title,
     description: typeof settings.description === 'string' ? settings.description.trim() : DEFAULT_SETTINGS.description,
-    highlight1Num: typeof settings.highlight1Num === 'string' ? settings.highlight1Num.trim() : DEFAULT_SETTINGS.highlight1Num,
-    highlight1Label: typeof settings.highlight1Label === 'string' ? settings.highlight1Label.trim() : DEFAULT_SETTINGS.highlight1Label,
-    highlight2Num: typeof settings.highlight2Num === 'string' ? settings.highlight2Num.trim() : DEFAULT_SETTINGS.highlight2Num,
-    highlight2Label: typeof settings.highlight2Label === 'string' ? settings.highlight2Label.trim() : DEFAULT_SETTINGS.highlight2Label,
-    highlight3Num: typeof settings.highlight3Num === 'string' ? settings.highlight3Num.trim() : DEFAULT_SETTINGS.highlight3Num,
-    highlight3Label: typeof settings.highlight3Label === 'string' ? settings.highlight3Label.trim() : DEFAULT_SETTINGS.highlight3Label,
+    highlight1Num: typeof h1Num === 'string' ? h1Num.trim() : DEFAULT_SETTINGS.highlight1Num,
+    highlight1Label: typeof h1Label === 'string' ? h1Label.trim() : DEFAULT_SETTINGS.highlight1Label,
+    highlight2Num: typeof h2Num === 'string' ? h2Num.trim() : DEFAULT_SETTINGS.highlight2Num,
+    highlight2Label: typeof h2Label === 'string' ? h2Label.trim() : DEFAULT_SETTINGS.highlight2Label,
+    highlight3Num: typeof h3Num === 'string' ? h3Num.trim() : DEFAULT_SETTINGS.highlight3Num,
+    highlight3Label: typeof h3Label === 'string' ? h3Label.trim() : DEFAULT_SETTINGS.highlight3Label,
   };
 }
 
@@ -74,8 +82,11 @@ async function hydrateSettingsFromApi(): Promise<void> {
   }
 }
 
-function ensureSettingsHydrated() {
-  if (typeof window === 'undefined' || hydrated || hydrationPromise) {
+function ensureSettingsHydrated(force = false) {
+  if (typeof window === 'undefined' || hydrationPromise) {
+    return;
+  }
+  if (hydrated && !force) {
     return;
   }
 
@@ -88,7 +99,7 @@ export function useWhoWeAreSettings(): WhoWeAreSettings {
   const [settings, setSettings] = React.useState<WhoWeAreSettings>(cachedSettingsValue);
 
   React.useEffect(() => {
-    ensureSettingsHydrated();
+    ensureSettingsHydrated(true);
 
     const handleUpdate = () => {
       setSettings(cachedSettingsValue);
@@ -107,10 +118,8 @@ export function useWhoWeAreSettings(): WhoWeAreSettings {
 }
 
 export async function saveWhoWeAreSettings(settings: Omit<WhoWeAreSettings, 'id'>): Promise<WhoWeAreSettings> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('blacksoft_auth_token') : null;
   const updated = await apiRequest<WhoWeAreSettings>(PROTECTED_SETTINGS_API_PATH, {
     method: 'PUT',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: JSON.stringify(settings),
   });
 

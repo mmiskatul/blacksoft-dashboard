@@ -204,6 +204,7 @@ export default function BookingsPage() {
   const [error, setError] = React.useState('');
   const [actionId, setActionId] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<BookingStatus | 'all'>('all');
+  const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true); setError('');
@@ -223,14 +224,14 @@ export default function BookingsPage() {
     finally { setActionId(null); }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Delete this booking request?')) return;
-    setActionId(id);
+  async function executeDelete() {
+    if (!deleteConfirmId) return;
+    setActionId(deleteConfirmId);
     try {
-      await deleteBooking(id);
-      setBookings(prev => prev.filter(b => b.id !== id));
+      await deleteBooking(deleteConfirmId);
+      setBookings(prev => prev.filter(b => b.id !== deleteConfirmId));
     } catch { alert('Failed to delete booking.'); }
-    finally { setActionId(null); }
+    finally { setActionId(null); setDeleteConfirmId(null); }
   }
 
   const counts = React.useMemo(() => ({
@@ -294,8 +295,82 @@ export default function BookingsPage() {
         <div style={{ display: 'grid', gap: 16 }}>
           {displayed.map(b => (
             <BookingCard key={b.id} booking={b}
-              onStatusChange={handleStatusChange} onDelete={handleDelete} acting={actionId === b.id} />
+              onStatusChange={handleStatusChange} onDelete={setDeleteConfirmId} acting={actionId === b.id} />
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(4, 6, 12, 0.8)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 3000,
+            padding: '20px'
+          }}
+        >
+          <div 
+            style={{
+              width: 'min(100%, 400px)',
+              background: 'rgba(12, 19, 33, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 24px 80px rgba(0, 0, 0, 0.8)',
+              padding: '30px',
+              textAlign: 'center',
+              borderRadius: '20px',
+              animation: 'slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚠️</div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>Confirm Deletion</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-light)', lineHeight: 1.5, marginBottom: '24px' }}>
+              Are you sure you want to permanently delete this booking request? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: 'var(--text-muted)',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={executeDelete}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
