@@ -26,6 +26,11 @@ const initialSummary: Summary = {
 };
 
 export default function DashboardOverviewPage() {
+  const publicSiteUrl = process.env.NEXT_PUBLIC_PUBLIC_SITE_URL?.trim();
+  if (!publicSiteUrl) {
+    throw new Error('NEXT_PUBLIC_PUBLIC_SITE_URL is not configured. Please define it in your .env file.');
+  }
+
   const [summary, setSummary] = React.useState<Summary>(initialSummary);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -63,7 +68,7 @@ export default function DashboardOverviewPage() {
             Every change here is reflected in the live experience.
           </p>
         </div>
-        <Link href={process.env.NEXT_PUBLIC_PUBLIC_SITE_URL || 'http://localhost:3000'} target="_blank" className={`${styles.heroAction} glow-btn`}>
+        <Link href={publicSiteUrl} target="_blank" className={`${styles.heroAction} glow-btn`}>
           View live site <span>↗</span>
         </Link>
       </section>

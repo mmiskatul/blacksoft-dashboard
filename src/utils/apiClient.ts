@@ -1,7 +1,5 @@
 'use client';
 
-const DEFAULT_API_BASE_URL = 'http://localhost:8000/api';
-
 export type UploadResponse = {
   url: string;
   publicId: string;
@@ -10,10 +8,11 @@ export type UploadResponse = {
 };
 
 export function getApiBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_API_BASE_URL?.trim() ||
-    DEFAULT_API_BASE_URL
-  );
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_API_BASE_URL is not configured. Please define it in your .env file.');
+  }
+  return url;
 }
 
 const AUTH_TOKEN_KEY = 'blacksoft_dashboard_access_token';
