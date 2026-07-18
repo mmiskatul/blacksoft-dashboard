@@ -46,8 +46,15 @@ export async function apiRequest<T>(
 
   if (!response.ok) {
     if (response.status === 401) clearAuthToken();
-    const detail = await response.text().catch(() => '');
-    throw new Error(detail || `Request failed with status ${response.status}`);
+    const text = await response.text().catch(() => '');
+    let errorMessage = text;
+    try {
+      const errorJson = JSON.parse(text);
+      errorMessage = errorJson.detail || errorJson.message || text;
+    } catch {
+      // Not JSON, use raw response text
+    }
+    throw new Error(errorMessage || `Request failed with status ${response.status}`);
   }
 
   if (response.status === 204) {
