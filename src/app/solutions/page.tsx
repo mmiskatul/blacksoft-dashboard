@@ -51,7 +51,7 @@ export default function SolutionsManagerPage() {
     ];
   }, [appCards, aiCards]);
 
-  const categories = ['App', 'Website', 'Figma design', 'Backend development', 'AI solution'];
+  const categories = ['App', 'Website', 'Figma design', 'Backend development', 'AI solution', 'Progressive Web App'];
 
   // Start editing a card
   const handleEdit = (card: SolutionCard & { __store: 'app' | 'ai' }) => {
@@ -67,6 +67,7 @@ export default function SolutionsManagerPage() {
     else if (lower === 'website') cat = 'Website';
     else if (lower.includes('figma') || lower.includes('design')) cat = 'Figma design';
     else if (lower.includes('backend') || lower.includes('developement') || lower.includes('development')) cat = 'Backend development';
+    else if (lower.includes('pwa') || lower.includes('progressive')) cat = 'Progressive Web App';
     else if (lower.includes('ai') || lower.includes('solution')) cat = 'AI solution';
     
     setDraftCategory(cat);
@@ -206,7 +207,7 @@ export default function SolutionsManagerPage() {
             Manage <span className={styles.titleGradient}>Solutions & Showcase</span>
           </h1>
           <p className={styles.intro}>
-            Configure App, Website, Figma design, Backend development, and AI solution cards displayed on the main portfolio catalog.
+            Configure App, Website, Figma design, Backend development, AI solution, and Progressive Web App cards displayed on the main portfolio catalog.
           </p>
         </div>
         <button 
@@ -241,6 +242,7 @@ export default function SolutionsManagerPage() {
             else if (lower === 'website') cat = 'Website';
             else if (lower.includes('figma') || lower.includes('design')) cat = 'Figma design';
             else if (lower.includes('backend') || lower.includes('developement') || lower.includes('development')) cat = 'Backend development';
+            else if (lower.includes('pwa') || lower.includes('progressive')) cat = 'Progressive Web App';
             else if (lower.includes('ai') || lower.includes('solution')) cat = 'AI solution';
             return cat === category;
           });
@@ -249,13 +251,6 @@ export default function SolutionsManagerPage() {
             <article key={category} className={`${styles.panel} ${styles.glassPanel}`}>
               <div className={styles.panelHeader} style={{ marginBottom: '14px' }}>
                 <h3 className={styles.panelTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '1.1rem' }}>
-                    {category === 'App' && '📱'}
-                    {category === 'Website' && '🌐'}
-                    {category === 'Figma design' && '🎨'}
-                    {category === 'Backend development' && '⚙️'}
-                    {category === 'AI solution' && '🧠'}
-                  </span>
                   {category} Cards
                 </h3>
                 <span className={styles.panelKicker}>{categoryCards.length} published</span>
