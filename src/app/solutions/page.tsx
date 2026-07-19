@@ -7,7 +7,8 @@ import {
   useAiSolutionCards, 
   appWebsiteStore, 
   aiSolutionStore,
-  type SolutionCard 
+  type SolutionCard,
+  type OtherLink
 } from '../../utils/solutionCardsStore';
 import { uploadImageToCloudinary } from '../../utils/apiClient';
 
@@ -38,6 +39,7 @@ export default function SolutionsManagerPage() {
   const [draftImageSrc, setDraftImageSrc] = useState('');
   const [draftImageAlt, setDraftImageAlt] = useState('');
   const [draftEnabled, setDraftEnabled] = useState(true);
+  const [draftOtherLinks, setDraftOtherLinks] = useState<OtherLink[]>([]);
   
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -73,6 +75,7 @@ export default function SolutionsManagerPage() {
     setDraftImageSrc(card.imageSrc || '');
     setDraftImageAlt(card.imageAlt || '');
     setDraftEnabled(card.enabled);
+    setDraftOtherLinks(card.otherLinks || []);
     setShowModal(true);
   };
 
@@ -88,6 +91,7 @@ export default function SolutionsManagerPage() {
     setDraftImageSrc('');
     setDraftImageAlt('');
     setDraftEnabled(true);
+    setDraftOtherLinks([]);
     setShowModal(false);
   };
 
@@ -133,7 +137,8 @@ export default function SolutionsManagerPage() {
           link: draftLink.trim(),
           imageSrc: draftImageSrc.trim(),
           imageAlt: draftImageAlt.trim(),
-          enabled: draftEnabled
+          enabled: draftEnabled,
+          otherLinks: draftOtherLinks
         });
       } else {
         // Migrating card from one store to another
@@ -148,7 +153,8 @@ export default function SolutionsManagerPage() {
           draftIcon.trim(),
           draftLink.trim(),
           draftImageSrc.trim(),
-          draftImageAlt.trim()
+          draftImageAlt.trim(),
+          draftOtherLinks
         );
       }
     } else {
@@ -160,7 +166,8 @@ export default function SolutionsManagerPage() {
         draftIcon.trim(),
         draftLink.trim(),
         draftImageSrc.trim(),
-        draftImageAlt.trim()
+        draftImageAlt.trim(),
+        draftOtherLinks
       );
     }
 
@@ -595,6 +602,143 @@ export default function SolutionsManagerPage() {
                     resize: 'none'
                   }}
                 />
+              </div>
+
+              {/* Multiple Roles / Other URLs Section */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <label style={{ fontSize: '0.75rem', color: '#8d9bb0', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                    ROLES & ADDITIONAL URLS ({draftOtherLinks.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setDraftOtherLinks([...draftOtherLinks, { title: '', description: '', url: '' }])}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      background: 'rgba(99, 102, 241, 0.15)',
+                      color: '#818cf8',
+                      fontSize: '0.72rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      border: 'none',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    + Add Role/URL
+                  </button>
+                </div>
+
+                {draftOtherLinks.length === 0 ? (
+                  <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', fontStyle: 'italic', margin: '4px 0 12px 0' }}>
+                    No additional roles/URLs added. Add links for separate portals (e.g. Admin Panel, Frontend App).
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px', marginBottom: '16px' }}>
+                    {draftOtherLinks.map((link, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          background: 'rgba(8, 12, 22, 0.5)',
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          borderRadius: '8px',
+                          padding: '10px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          position: 'relative'
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setDraftOtherLinks(draftOtherLinks.filter((_, i) => i !== idx))}
+                          style={{
+                            position: 'absolute',
+                            top: '6px',
+                            right: '8px',
+                            color: '#ef4444',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                          title="Remove this role link"
+                        >
+                          ×
+                        </button>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                          <div>
+                            <input
+                              type="text"
+                              value={link.title}
+                              onChange={(e) => {
+                                const copy = [...draftOtherLinks];
+                                copy[idx] = { ...copy[idx], title: e.target.value };
+                                setDraftOtherLinks(copy);
+                              }}
+                              placeholder="Role (e.g. Frontend App)"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '6px',
+                                border: '1px solid rgba(255,255,255,0.06)',
+                                background: 'rgba(8, 12, 22, 0.9)',
+                                color: '#fff',
+                                outline: 'none',
+                                fontSize: '0.75rem'
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              value={link.url}
+                              onChange={(e) => {
+                                const copy = [...draftOtherLinks];
+                                copy[idx] = { ...copy[idx], url: e.target.value };
+                                setDraftOtherLinks(copy);
+                              }}
+                              placeholder="URL (e.g. https://...)"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '6px',
+                                border: '1px solid rgba(255,255,255,0.06)',
+                                background: 'rgba(8, 12, 22, 0.9)',
+                                color: '#fff',
+                                outline: 'none',
+                                fontSize: '0.75rem'
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            type="text"
+                            value={link.description}
+                            onChange={(e) => {
+                              const copy = [...draftOtherLinks];
+                              copy[idx] = { ...copy[idx], description: e.target.value };
+                              setDraftOtherLinks(copy);
+                            }}
+                            placeholder="Brief description of this portal/role (optional)"
+                            style={{
+                              width: '100%',
+                              padding: '8px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              background: 'rgba(8, 12, 22, 0.9)',
+                              color: '#fff',
+                              outline: 'none',
+                              fontSize: '0.75rem'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0' }}>

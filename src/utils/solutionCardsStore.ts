@@ -3,6 +3,12 @@
 import React from 'react';
 import { apiRequest } from './apiClient';
 
+export type OtherLink = {
+  title: string;
+  description: string;
+  url: string;
+};
+
 export type SolutionCard = {
   id: string;
   title: string;
@@ -13,9 +19,10 @@ export type SolutionCard = {
   imageSrc?: string;
   imageAlt?: string;
   enabled: boolean;
+  otherLinks?: OtherLink[];
 };
 
-type Patch = Partial<Pick<SolutionCard, 'title' | 'description' | 'category' | 'icon' | 'link' | 'imageSrc' | 'imageAlt' | 'enabled'>>;
+type Patch = Partial<Pick<SolutionCard, 'title' | 'description' | 'category' | 'icon' | 'link' | 'imageSrc' | 'imageAlt' | 'enabled' | 'otherLinks'>>;
 
 function createStore(apiPath: string, eventName: string) {
   const empty: SolutionCard[] = [];
@@ -41,6 +48,13 @@ function createStore(apiPath: string, eventName: string) {
       imageSrc: typeof item.imageSrc === 'string' ? item.imageSrc.trim() : '',
       imageAlt: typeof item.imageAlt === 'string' ? item.imageAlt.trim() : '',
       enabled: typeof item.enabled === 'boolean' ? item.enabled : true,
+      otherLinks: Array.isArray(item.otherLinks)
+        ? item.otherLinks.map((link: any) => ({
+            title: typeof link.title === 'string' ? link.title.trim() : '',
+            description: typeof link.description === 'string' ? link.description.trim() : '',
+            url: typeof link.url === 'string' ? link.url.trim() : '',
+          }))
+        : [],
     }));
 
   const notify = (next: SolutionCard[]) => {
@@ -62,7 +76,7 @@ function createStore(apiPath: string, eventName: string) {
   };
 
   const get = () => { ensureHydrated(); return cached; };
-  const add = (title: string, description: string, category: string, icon: string, link: string, imageSrc?: string, imageAlt?: string) => {
+  const add = (title: string, description: string, category: string, icon: string, link: string, imageSrc?: string, imageAlt?: string, otherLinks?: OtherLink[]) => {
     const optimistic: SolutionCard = { 
       id: `draft-${Date.now()}`, 
       title: title.trim(), 
@@ -72,7 +86,8 @@ function createStore(apiPath: string, eventName: string) {
       link: link.trim() || '#solutions', 
       imageSrc: imageSrc?.trim() || '',
       imageAlt: imageAlt?.trim() || '',
-      enabled: true 
+      enabled: true,
+      otherLinks: otherLinks || []
     };
     notify([...get(), optimistic]);
     void apiRequest<SolutionCard>(apiPath, { method: 'POST', body: JSON.stringify(optimistic) })
