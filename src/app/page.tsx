@@ -59,7 +59,7 @@ export default function DashboardOverviewPage() {
     <div className={`${styles.page} animate-fade-in-up delay-1`}>
       <section className={styles.hero}>
         <div>
-          <div className={styles.eyebrow}>Blacksoft / control room</div>
+          <div className={styles.eyebrow}>Namisoft / control room</div>
           <h1 className={styles.title}>
             Build the <span className={styles.titleGradient}>intelligence layer</span>.
           </h1>

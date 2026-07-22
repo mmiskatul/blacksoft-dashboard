@@ -13,7 +13,7 @@ export type WhyUsCard = {
   enabled: boolean;
 };
 
-const STORE_EVENT = 'blacksoft_why_us_cards_updated';
+const STORE_EVENT = 'Namisoft_why_us_cards_updated';
 const API_PATH = '/why-us';
 
 const EMPTY_WHY_US_CARDS: WhyUsCard[] = [];

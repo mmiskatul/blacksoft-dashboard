@@ -15,14 +15,14 @@ export interface WhoWeAreSettings {
   highlight3Label: string;
 }
 
-const EVENT_NAME = 'blacksoft_who_we_are_updated';
+const EVENT_NAME = 'Namisoft_who_we_are_updated';
 const PUBLIC_SETTINGS_API_PATH = '/services/who-we-are/settings';
 const PROTECTED_SETTINGS_API_PATH = '/dashboard/who-we-are/settings';
 
 const DEFAULT_SETTINGS: WhoWeAreSettings = {
   tag: 'WHO WE ARE',
   title: 'We are a collective of digital engineers, designers, and systems architects.',
-  description: 'At Blacksoft, we build high-fidelity software products, autonomous agent layers, and scalable cloud infrastructure for startups and modern companies.',
+  description: 'At Namisoft, we build high-fidelity software products, autonomous agent layers, and scalable cloud infrastructure for startups and modern companies.',
   highlight1Num: '50+',
   highlight1Label: 'Intelligent Systems Shipped',
   highlight2Num: '99.9%',
