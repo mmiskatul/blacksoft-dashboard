@@ -11,7 +11,7 @@ export type ServiceCard = {
   enabled: boolean;
 };
 
-const STORE_EVENT = 'blacksoft_service_cards_updated';
+const STORE_EVENT = 'Namisoft_service_cards_updated';
 const API_PATH = '/services';
 
 const EMPTY_SERVICE_CARDS: ServiceCard[] = [];

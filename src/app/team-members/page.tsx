@@ -449,7 +449,7 @@ export default function TeamMembersDashboardPage() {
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div>
                 <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Section Title</span>
-                <div style={{ fontSize: '0.88rem', color: 'var(--text-white)', fontWeight: 700, marginTop: '2px' }}>{settings.title || 'The Architects of Blacksoft'}</div>
+                <div style={{ fontSize: '0.88rem', color: 'var(--text-white)', fontWeight: 700, marginTop: '2px' }}>{settings.title || 'The Architects of Namisoft'}</div>
               </div>
               <div>
                 <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Section Subtitle</span>

@@ -116,8 +116,8 @@ function createStore(apiPath: string, eventName: string) {
   return { get, add, update, remove, useCards };
 }
 
-export const appWebsiteStore = createStore('/dashboard/app-websites/cards', 'blacksoft_app_websites_updated');
-export const aiSolutionStore = createStore('/dashboard/ai-solutions/cards', 'blacksoft_ai_solutions_updated');
+export const appWebsiteStore = createStore('/dashboard/app-websites/cards', 'Namisoft_app_websites_updated');
+export const aiSolutionStore = createStore('/dashboard/ai-solutions/cards', 'Namisoft_ai_solutions_updated');
 
 export const useAppWebsiteCards = appWebsiteStore.useCards;
 export const useAiSolutionCards = aiSolutionStore.useCards;

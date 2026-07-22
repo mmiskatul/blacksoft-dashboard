@@ -104,7 +104,7 @@ export default function ContactInfoPage() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="e.g. hello@blacksoft.tech"
+                placeholder="e.g. hello@Namisoft.tech"
                 style={input}
               />
             </div>

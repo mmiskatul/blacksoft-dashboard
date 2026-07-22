@@ -32,7 +32,7 @@ export default function LoginPage() {
   };
 
   return <main className={styles.page}><section className={styles.card}>
-    <div className={styles.eyebrow}>Blacksoft Hub</div>
+    <div className={styles.eyebrow}>Namisoft Hub</div>
     <h1 className={styles.title}>Sign in to the dashboard</h1>
     <p className={styles.description}>Authorized administrators only.</p>
     <form className={styles.form} onSubmit={submit}>

@@ -13,7 +13,7 @@ export const DEFAULTS = {
   // About Page Hero
   'about.hero.tag': 'WHO WE ARE',
   'about.hero.title': 'Architecting Intelligence for the Elite Enterprise.',
-  'about.hero.description': "At Blacksoft, we don't just build software; we engineer the cognitive infrastructure that powers the world's most ambitious organizations.",
+  'about.hero.description': "At Namisoft, we don't just build software; we engineer the cognitive infrastructure that powers the world's most ambitious organizations.",
   'about.hero.cta': 'Explore Our Tech',
   'about.mission.title': 'Bridge the gap between raw data and autonomous wisdom.',
   'about.mission.description': 'We engineer high-availability cognitive architectures that integrate seamlessly into enterprise workflows, giving teams the tools to solve complex challenges with custom AI engines.',
@@ -36,28 +36,28 @@ export const DEFAULTS = {
   // Solutions Page Hero
   'solutions.hero.tag': 'POWERING THE FUTURE',
   'solutions.hero.title': 'Industry Solutions',
-  'solutions.hero.description': 'Blacksoft delivers high-precision, enterprise-grade artificial intelligence tailored for specialized domains. We bridge the gap between experimental tech and mission-critical deployment.',
+  'solutions.hero.description': 'Namisoft delivers high-precision, enterprise-grade artificial intelligence tailored for specialized domains. We bridge the gap between experimental tech and mission-critical deployment.',
 
   // Navbar
   'navbar.cta': 'Book a Call',
-  'navbar.brand': 'Blacksoft',
+  'navbar.brand': 'Namisoft',
 
   // Footer
   'footer.description': 'Architecting the next generation of intelligent software for world-class innovators and tech leaders.',
-  'footer.email': 'hello@blacksoft.tech',
+  'footer.email': 'hello@Namisoft.tech',
   'footer.location': 'Global HQ: San Francisco, CA',
-  'footer.copyright': 'Blacksoft. All rights reserved.',
+  'footer.copyright': 'Namisoft. All rights reserved.',
 
   // CTA Section
   'cta.title': 'Ready to build the future of industry?',
-  'cta.description': "Join the ranks of global innovators who have transformed their operations with Blacksoft's AI-first intelligence platforms.",
+  'cta.description': "Join the ranks of global innovators who have transformed their operations with Namisoft's AI-first intelligence platforms.",
   'cta.primary': 'Schedule a Consultation',
   'cta.secondary': 'View Case Studies',
 
   // Who We Are Section
   'home.whoweare.tag': 'WHO WE ARE',
   'home.whoweare.title': 'We are a collective of digital engineers, designers, and systems architects.',
-  'home.whoweare.description': 'At Blacksoft, we build high-fidelity software products, autonomous agent layers, and scalable cloud infrastructure for startups and modern companies.',
+  'home.whoweare.description': 'At Namisoft, we build high-fidelity software products, autonomous agent layers, and scalable cloud infrastructure for startups and modern companies.',
   'home.whoweare.highlight1.num': '50+',
   'home.whoweare.highlight1.label': 'Intelligent Systems Shipped',
   'home.whoweare.highlight2.num': '99.9%',
@@ -68,7 +68,7 @@ export const DEFAULTS = {
 
 export function getConfig(key: keyof typeof DEFAULTS): string {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(`blacksoft_config_${key}`);
+    const saved = localStorage.getItem(`Namisoft_config_${key}`);
     if (saved !== null) {
       return saved;
     }
@@ -78,9 +78,9 @@ export function getConfig(key: keyof typeof DEFAULTS): string {
 
 export function setConfig(key: keyof typeof DEFAULTS, value: string): void {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(`blacksoft_config_${key}`, value);
+    localStorage.setItem(`Namisoft_config_${key}`, value);
     // Dispatch custom event to notify other components on the same page
-    window.dispatchEvent(new Event('blacksoft_config_updated'));
+    window.dispatchEvent(new Event('Namisoft_config_updated'));
   }
 }
 
@@ -90,11 +90,11 @@ export function useSiteConfig(key: keyof typeof DEFAULTS): string {
       onStoreChange();
     };
 
-    window.addEventListener('blacksoft_config_updated', handleUpdate);
+    window.addEventListener('Namisoft_config_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
     return () => {
-      window.removeEventListener('blacksoft_config_updated', handleUpdate);
+      window.removeEventListener('Namisoft_config_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
