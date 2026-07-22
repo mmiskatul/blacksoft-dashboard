@@ -13,7 +13,7 @@ export type EcommerceCard = {
   enabled: boolean;
 };
 
-const STORE_EVENT = 'blacksoft_ecommerce_cards_updated';
+const STORE_EVENT = 'Namisoft_ecommerce_cards_updated';
 const API_PATH = '/dashboard/ecommerce/cards';
 const EMPTY_CARDS: EcommerceCard[] = [];
 

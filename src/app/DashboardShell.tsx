@@ -71,7 +71,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.logo}>
-            Blacksoft Hub
+            Namisoft Hub
           </Link>
         </div>
         <nav className={styles.sidebarNav}>

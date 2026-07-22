@@ -24,7 +24,7 @@ export interface TeamSectionSettings {
   ctaLink: string;
 }
 
-const EVENT_NAME = 'blacksoft_team_updated';
+const EVENT_NAME = 'Namisoft_team_updated';
 const MEMBERS_API_PATH = '/dashboard/team-members/members';
 const SETTINGS_API_PATH = '/dashboard/team-members/settings';
 
