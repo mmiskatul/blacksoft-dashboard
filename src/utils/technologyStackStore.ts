@@ -33,7 +33,7 @@ export interface TechnologyStackSettings {
   sectionSubtitle: string;
 }
 
-const STORE_EVENT = 'blacksoft_technology_stack_updated';
+const STORE_EVENT = 'Namisoft_technology_stack_updated';
 const CARDS_API_PATH = '/dashboard/technology-stack/cards';
 const SETTINGS_API_PATH = '/dashboard/technology-stack/settings';
 

@@ -12,7 +12,7 @@ export type CapabilityCard = {
   enabled: boolean;
 };
 
-const STORE_EVENT = 'blacksoft_capability_cards_updated';
+const STORE_EVENT = 'Namisoft_capability_cards_updated';
 const API_PATH = '/dashboard/capabilities';
 
 const EMPTY_CAPABILITY_CARDS: CapabilityCard[] = [];

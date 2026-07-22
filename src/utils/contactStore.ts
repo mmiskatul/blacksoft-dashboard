@@ -15,7 +15,7 @@ const API_PUT  = '/dashboard/contact-info';
 
 let cached: ContactInfoSettings = { location: '', email: '', phone: '', privacyPolicy: '' };
 let hydrated = false;
-const EVENT = 'blacksoft_dashboard_contact_updated';
+const EVENT = 'Namisoft_dashboard_contact_updated';
 const listeners = new Set<() => void>();
 
 function broadcast() {

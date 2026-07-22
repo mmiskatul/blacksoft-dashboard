@@ -15,7 +15,7 @@ export function getApiBaseUrl(): string {
   return url;
 }
 
-const AUTH_TOKEN_KEY = 'blacksoft_dashboard_access_token';
+const AUTH_TOKEN_KEY = 'Namisoft_dashboard_access_token';
 
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;

@@ -9,7 +9,7 @@ export type TrustedInnovator = {
   enabled: boolean;
 };
 
-const STORE_EVENT = 'blacksoft_trusted_innovators_updated';
+const STORE_EVENT = 'Namisoft_trusted_innovators_updated';
 const API_PATH = '/dashboard/innovators';
 
 const EMPTY_TRUSTED_INNOVATORS: TrustedInnovator[] = [];
